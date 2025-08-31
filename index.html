@@ -87,10 +87,15 @@
         function createSnowflakes() {
           flakes = [];
           const isDark = document.documentElement.classList.contains('dark');
-          // Fewer snowflakes in light theme
-          const count = Math.floor(window.innerWidth / (isDark ? 10 : 20));
+          // Fewer and smaller snowflakes in light theme
+          const count = Math.floor(window.innerWidth / (isDark ? 8 : 30));
           for (let i = 0; i < count; i++) {
-            flakes.push(new Snowflake());
+            const flake = new Snowflake();
+            if (!isDark) {
+              // Make snowflakes smaller in light theme
+              flake.size = Math.random() * 2 + 1;
+            }
+            flakes.push(flake);
           }
         }
         
@@ -445,12 +450,12 @@
     
     /* Text selection styles */
     html {
-      -webkit-tap-highlight-color: #40E0D0;
+      -webkit-tap-highlight-color: #00D7E6;
     }
     
     /* Base selection styles */
     ::selection {
-      background: #40E0D0;
+      background: #00D7E6;
       color: #000;
       text-shadow: none;
     }
@@ -460,23 +465,23 @@
     *::selection,
     *::-moz-selection,
     *::-webkit-selection {
-      -webkit-tap-highlight-color: #40E0D0;
+      -webkit-tap-highlight-color: #00D7E6;
     }
     
     /* Force selection color */
     *::selection {
-      background: #40E0D0 !important;
+      background: #00D7E6 !important;
       color: #000 !important;
       -webkit-text-fill-color: #000 !important;
     }
     
     *::-moz-selection {
-      background: #40E0D0 !important;
+      background: #00D7E6 !important;
       color: #000 !important;
     }
     
     *::-webkit-selection {
-      background: #40E0D0 !important;
+      background: #00D7E6 !important;
       color: #000 !important;
       -webkit-text-fill-color: #000 !important;
     }
