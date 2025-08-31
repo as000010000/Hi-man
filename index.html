@@ -423,11 +423,22 @@
     .snowflake { animation: snowfall var(--dur, 15s) linear infinite; font-size: var(--size, 14px); left: var(--left, 50%); animation-delay: var(--delay, 0s); }
     
     /* Gradient text */
-    .gradient-text {
+    .gradient-text,
+    ::selection,
+    ::-moz-selection {
       background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      color: transparent;
+    }
+    
+    /* For better visibility of selected text */
+    ::selection,
+    ::-moz-selection {
+      background: linear-gradient(90deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.2));
+      -webkit-text-fill-color: inherit;
+      color: inherit;
     }
     
     /* Decorative elements */
