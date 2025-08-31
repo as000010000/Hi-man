@@ -516,8 +516,20 @@
       opacity: 0.7;
     }
   </style>
+  <style>
+    /* Snowflake Interaction Zone */
+    .snow-interaction-zone {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-background text-foreground overflow-x-hidden transition-all duration-2000 ease-in-out">
+<body class="min-h-screen flex flex-col bg-background text-foreground antialiased transition-colors duration-300">
   <!-- Theme Toggle Button -->
   <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-full bg-card/80 hover:bg-accent hover:text-accent-foreground transition-all duration-200 shadow-lg z-[9999] border border-border/50" style="backdrop-filter: blur(8px);">
     <i data-lucide="moon" class="w-5 h-5"></i>
@@ -575,7 +587,7 @@
             <span class="text-foreground">Give Your Business</span> The Website It Deserves
           </h1>
           <p class="mt-6 text-lg md:text-xl leading-8 text-muted-foreground max-w-2xl mx-auto">
-            We build intelligent systems that amplify human potential, turning your complex challenges into impactful, data-driven outcomes.
+            We craft beautiful, responsive websites that elevate your online presence, turning your vision into a powerful digital experience that drives results for your business.
           </p>
           <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
           </div>
@@ -851,6 +863,115 @@
         }
       }
     });
+  </script>
+  <script>
+      // Snowflake Interaction - Direct and Strong
+      let mouseX = -1000, mouseY = -1000;
+      const PUSH_RADIUS = 200; // Larger radius
+      
+      // Track mouse position
+      document.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+      
+      document.addEventListener('mouseleave', () => {
+        mouseX = -1000;
+        mouseY = -1000;
+      });
+      
+      // Make cursor visible
+      document.body.style.cursor = 'default';
+      
+      // Snowflake class with mouse interaction
+      class Snowflake {
+        constructor() {
+          this.reset();
+          this.y = Math.random() * canvas.height;
+          this.vx = 0;
+          this.vy = 0;
+          this.friction = 0.9;
+        }
+        
+        reset() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * -100;
+          this.size = Math.random() * 3 + 2;
+          this.speed = Math.random() * 1 + 0.5;
+          this.angle = Math.random() * Math.PI * 2;
+          this.opacity = Math.random() * 0.5 + 0.5;
+          this.vx = 0;
+          this.vy = 0;
+        }
+        
+        update() {
+          // Basic movement
+          this.y += this.speed;
+          this.x += Math.sin(this.angle) * 0.5;
+          this.angle += 0.01;
+          
+          // Calculate distance to mouse
+          const dx = this.x - mouseX;
+          const dy = this.y - mouseY;
+          const distanceSquared = dx * dx + dy * dy;
+          
+          // Push away from mouse - SIMPLE AND STRONG
+          if (distanceSquared < PUSH_RADIUS * PUSH_RADIUS) {
+            const distance = Math.sqrt(distanceSquared);
+            const pushForce = (1 - distance / PUSH_RADIUS) * 15; // Much stronger push
+            
+            // Move directly away from cursor
+            this.x += (dx / distance) * pushForce;
+            this.y += (dy / distance) * pushForce;
+            
+            // Add some velocity for momentum
+            this.vx = (dx / distance) * pushForce * 0.5;
+            this.vy = (dy / distance) * pushForce * 0.5;
+          }
+          
+          // Apply velocity with friction
+          this.x += this.vx;
+          this.y += this.vy + this.speed; // Keep the falling motion
+          this.vx *= 0.8; // High friction to stop quickly
+          this.vy *= 0.8; // High friction to stop quickly
+          
+          // Reset if out of bounds
+          if (this.y > canvas.height + 10) {
+            this.reset();
+            this.y = -10;
+          }
+          
+          // Wrap around horizontally
+          if (this.x > canvas.width + 10) this.x = -10;
+          if (this.x < -10) this.x = canvas.width + 10;
+        }
+        
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          const isDark = document.documentElement.classList.contains('dark');
+          if (isDark) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+          } else {
+            ctx.fillStyle = `rgba(0, 215, 230, ${this.opacity})`;
+          }
+          ctx.fill();
+        }
+      }
+      
+      // Update the animation loop
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Update and draw each flake
+        flakes.forEach(flake => {
+          flake.update();
+          flake.draw();
+        });
+        
+        animationId = requestAnimationFrame(animate);
+      }
   </script>
 </body>
 </html>
