@@ -356,8 +356,8 @@
 <body class="min-h-screen bg-background text-foreground overflow-x-hidden transition-all duration-2000 ease-in-out">
   <!-- Theme Toggle Button -->
   <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-full bg-card/80 hover:bg-accent hover:text-accent-foreground transition-all duration-200 shadow-lg z-[9999] border border-border/50" style="backdrop-filter: blur(8px);">
-    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
-    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+    <i data-lucide="moon" class="w-5 h-5"></i>
+    <i data-lucide="sun" class="w-5 h-5 hidden"></i>
   </button>
   
   <!-- Decorative background elements -->
@@ -623,6 +623,18 @@
         // Force a reflow to ensure transitions work
         document.body.offsetHeight;
         
+        // Toggle icons based on theme
+        const moonIcon = document.querySelector('[data-lucide="moon"]');
+        const sunIcon = document.querySelector('[data-lucide="sun"]');
+        
+        if (isDark) {
+          moonIcon.classList.add('hidden');
+          sunIcon.classList.remove('hidden');
+        } else {
+          moonIcon.classList.remove('hidden');
+          sunIcon.classList.add('hidden');
+        }
+        
         // Set a small timeout to ensure the transition is applied before changing the theme
         setTimeout(() => {
           if (isDark) {
@@ -650,23 +662,26 @@
         }
       }
       
-      // Initialize theme
-      function initTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
-          setTheme(true);
-        } else {
-          setTheme(false);
-        }
-      }
-      
       // Initialize theme and event listener
       if (themeToggle) {
-        initTheme();
+        // Load saved theme or use system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          setTheme(savedTheme === 'dark');
+        } else {
+          setTheme(prefersDarkScheme.matches);
+        }
+        
+        // Set up click handler
         themeToggle.addEventListener('click', () => {
           const isDark = !html.classList.contains('dark');
           setTheme(isDark);
         });
+        
+        // Initialize Lucide icons
+        if (window.lucide) {
+          lucide.createIcons();
+        }
       }
     });
   </script>
