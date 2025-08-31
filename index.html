@@ -75,7 +75,10 @@
           draw() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            // Use navy blue in light theme, white in dark theme
+            const isDark = document.documentElement.classList.contains('dark');
+            const color = isDark ? '255, 255, 255' : '0, 0, 128';
+            ctx.fillStyle = `rgba(${color}, ${this.opacity})`;
             ctx.fill();
           }
         }
