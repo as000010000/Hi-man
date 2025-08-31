@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SnowBase Studio | AI Development</title>
+  <title>SnowBase Studio | Website Development</title>
   <link rel="icon" href="favicon.ico" />
   <meta name="description" content="SnowBase Studio is a premium AI development company creating high-converting solutions." />
   <meta name="keywords" content="AI development, machine learning, data analytics, AI consulting, SnowBase Studio">
@@ -43,11 +43,45 @@
   </script>
   
   <style>
+    /* Apply smooth transitions to all elements */
+    html {
+      transition: background-color 2000ms ease-in-out, color 2000ms ease-in-out;
+    }
+    
+    * {
+      transition: color 2000ms ease-in-out, 
+                 background-color 2000ms ease-in-out,
+                 border-color 2000ms ease-in-out,
+                 fill 2000ms ease-in-out,
+                 stroke 2000ms ease-in-out,
+                 opacity 2000ms ease-in-out;
+    }
+    
+    /* Force transitions on all text and backgrounds */
+    body, h1, h2, h3, h4, h5, h6, p, a, span, div, section, header, footer, main, aside, nav, button, input, textarea, select, label, li, td, th, thead, tbody, tr, table, .text-\[\#0f172a\] {
+      transition: color 2000ms ease-in-out, 
+                 background-color 2000ms ease-in-out !important;
+    }
+    
     :root {
+      /* Light theme */
+      --background-light: 0 0% 100%;
+      --foreground-light: 223 30% 9%;
+      --card-light: 210 40% 98%;
+      --card-foreground-light: 223 30% 9%;
+      
+      /* Dark theme (default) */
       --background: 223 30% 9%;
       --foreground: 216 40% 95%;
       --card: 223 30% 14%;
       --card-foreground: 216 40% 95%;
+      
+      /* Set initial theme */
+      color-scheme: dark;
+      --background: var(--background);
+      --foreground: var(--foreground);
+      --card: var(--card);
+      --card-foreground: var(--card-foreground);
       --popover: 223 30% 14%;
       --popover-foreground: 216 40% 95%;
       --primary: 216 47% 80%;
@@ -316,34 +350,19 @@
       position: absolute;
       border-radius: 50%;
       background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%);
-      z-index: -1;
     }
   </style>
 </head>
-<body class="min-h-screen bg-background text-foreground overflow-x-hidden">
+<body class="min-h-screen bg-background text-foreground overflow-x-hidden transition-all duration-2000 ease-in-out">
+  <!-- Theme Toggle Button -->
+  <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-full bg-card/80 hover:bg-accent hover:text-accent-foreground transition-all duration-200 shadow-lg z-[9999] border border-border/50" style="backdrop-filter: blur(8px);">
+    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+  </button>
+  
   <!-- Decorative background elements -->
   <div class="decorative-circle w-64 h-64 -top-32 -left-32"></div>
   <div class="decorative-circle w-96 h-96 -bottom-48 -right-48"></div>
-  
-  <canvas id="snow" aria-hidden="true"></canvas>
-  <!-- Global falling snowflakes (visible site-wide) -->
-  <div class="snowflakes" aria-hidden="true">
-    <span class="snowflake" style="--left:3%; --size:14px; --dur:18s; --delay:-2s">❄</span>
-    <span class="snowflake" style="--left:8%; --size:10px; --dur:14s; --delay:-6s">❄</span>
-    <span class="snowflake" style="--left:14%; --size:16px; --dur:20s; --delay:-4s">❄</span>
-    <span class="snowflake" style="--left:20%; --size:12px; --dur:17s; --delay:-8s">❄</span>
-    <span class="snowflake" style="--left:27%; --size:13px; --dur:19s; --delay:-3s">❄</span>
-    <span class="snowflake" style="--left:33%; --size:9px; --dur:15s; --delay:-5s">❄</span>
-    <span class="snowflake" style="--left:40%; --size:18px; --dur:22s; --delay:-7s">❄</span>
-    <span class="snowflake" style="--left:47%; --size:11px; --dur:16s; --delay:-1s">❄</span>
-    <span class="snowflake" style="--left:54%; --size:14px; --dur:18s; --delay:-9s">❄</span>
-    <span class="snowflake" style="--left:61%; --size:12px; --dur:17s; --delay:-6s">❄</span>
-    <span class="snowflake" style="--left:69%; --size:15px; --dur:20s; --delay:-2s">❄</span>
-    <span class="snowflake" style="--left:76%; --size:10px; --dur:14s; --delay:-4s">❄</span>
-    <span class="snowflake" style="--left:83%; --size:17px; --dur:21s; --delay:-8s">❄</span>
-    <span class="snowflake" style="--left:90%; --size:13px; --dur:18s; --delay:-5s">❄</span>
-    <span class="snowflake" style="--left:96%; --size:12px; --dur:16s; --delay:-3s">❄</span>
-  </div>
   
   <!-- Header -->
   <header id="site-header" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
@@ -381,7 +400,7 @@
 
   <main class="relative z-10 flex-1">
     <!-- Hero -->
-    <section id="home" class="relative overflow-hidden w-full bg-gradient-to-br from-background via-secondary to-background py-28 md:py-36 lg:py-44">
+    <section id="home" class="relative overflow-hidden w-full bg-gradient-to-br from-background via-secondary to-background py-28 md:py-36 lg:py-44 transition-theme">
       
       <div class="relative z-10 container mx-auto px-4 md:px-6">
         <div class="mx-auto max-w-4xl text-center">
@@ -426,7 +445,7 @@
     </section>
 
     <!-- Technology Stack Bento Grid -->
-    <section id="technology-stack" class="w-full bg-gradient-to-br from-secondary to-background py-24">
+    <section id="technology-stack" class="w-full bg-gradient-to-br from-secondary to-background py-24 transition-theme">
       <div class="container mx-auto px-4">
         <div class="mx-auto max-w-4xl text-center mb-16">
           <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
@@ -507,7 +526,7 @@
     </section>
 
     <!-- Contact -->
-    <section id="contact" class="w-full bg-background py-24 md:py-32">
+    <section id="contact" class="w-full bg-background py-24 md:py-32 transition-theme">
       <div class="container mx-auto px-4">
         <div class="mx-auto max-w-3xl text-center mb-16">
           <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
@@ -546,124 +565,6 @@
   
   
   <script>
-    // Snowflake animation - optimized for performance
-    document.addEventListener('DOMContentLoaded', () => {
-      const canvas = document.getElementById('snow');
-      if (!canvas) return;
-      
-      const ctx = canvas.getContext('2d');
-      let animationId;
-      
-      // Resize handler with debounce
-      let resizeTimeout;
-      const handleResize = () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-        }, 100);
-      };
-      
-      // Initial setup
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      window.addEventListener('resize', handleResize);
-      
-      // Snowflake class
-      class Snowflake {
-        constructor() {
-          this.reset();
-          this.y = Math.random() * canvas.height; // Start at random y position
-        }
-        
-        reset() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * -100; // Start above the viewport
-          this.r = 1 + Math.random() * 3; // Slightly larger size range
-          this.speed = 0.5 + Math.random() * 2; // Variable speed
-          this.wind = (Math.random() - 0.5) * 1; // More horizontal movement
-          this.opacity = 0.4 + Math.random() * 0.6; // More visible snowflakes
-          this.rotation = Math.random() * Math.PI * 2; // Initial rotation
-          this.rotationSpeed = (Math.random() - 0.5) * 0.1; // Rotation speed
-        }
-        
-        update() {
-          this.x += this.wind;
-          this.y += this.speed;
-          this.rotation += this.rotationSpeed;
-          
-          // Reset if out of bounds
-          if (this.y > canvas.height + 10 || 
-              this.x < -10 || 
-              this.x > canvas.width + 10) {
-            this.reset();
-            this.y = -10;
-          }
-        }
-        
-        draw() {
-          ctx.save();
-          ctx.translate(this.x, this.y);
-          ctx.rotate(this.rotation);
-          ctx.beginPath();
-          ctx.moveTo(0, -this.r);
-          for (let i = 0; i < 6; i++) {
-            ctx.lineTo(
-              Math.cos((i * 60 + 30) * Math.PI / 180) * this.r,
-              Math.sin((i * 60 + 30) * Math.PI / 180) * this.r
-            );
-            ctx.lineTo(
-              Math.cos((i * 60 + 60) * Math.PI / 180) * (this.r * 0.5),
-              Math.sin((i * 60 + 60) * Math.PI / 180) * (this.r * 0.5)
-            );
-          }
-          ctx.closePath();
-          ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-      
-      // Create snowflakes
-      const flakes = Array.from({ length: 100 }, () => new Snowflake());
-      
-      // Animation loop
-      const animate = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        flakes.forEach(flake => {
-          flake.update();
-          flake.draw();
-        });
-        animationId = requestAnimationFrame(animate);
-      };
-      
-      // Start animation with a small delay
-      const startAnimation = () => {
-        setTimeout(() => {
-          animationId = requestAnimationFrame(animate);
-        }, 500);
-      };
-      
-      // Handle page visibility changes
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          startAnimation();
-        } else {
-          cancelAnimationFrame(animationId);
-        }
-      });
-      
-      // Start the animation
-      startAnimation();
-      
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        document.removeEventListener('visibilitychange', startAnimation);
-        cancelAnimationFrame(animationId);
-      };
-    });
-    
     // Mobile menu toggle
     document.addEventListener('DOMContentLoaded', () => {
       const menuBtn = document.getElementById('menu-btn');
@@ -686,16 +587,6 @@
   </script>
   
   <style>
-    canvas#snow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 10;
-      opacity: 0.9;
-    }
     
     /* Reduce motion preference */
     @media (prefers-reduced-motion: reduce) {
@@ -718,5 +609,66 @@
       animation-delay: 2s;
     }
   </style>
+  
+  <!-- Theme Toggle Script -->
+  <script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      // Function to set theme
+      function setTheme(isDark) {
+        // Force a reflow to ensure transitions work
+        document.body.offsetHeight;
+        
+        // Set a small timeout to ensure the transition is applied before changing the theme
+        setTimeout(() => {
+          if (isDark) {
+            html.classList.add('dark');
+            html.style.setProperty('--background', '223 30% 9%');
+            html.style.setProperty('--foreground', '216 40% 95%');
+            html.style.setProperty('--card', '223 30% 14%');
+            html.style.setProperty('--card-foreground', '216 40% 95%');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            html.classList.remove('dark');
+            html.style.setProperty('--background', '0 0% 100%');
+            html.style.setProperty('--foreground', '223 30% 9%');
+            html.style.setProperty('--card', '210 40% 98%');
+            html.style.setProperty('--card-foreground', '223 30% 9%');
+            localStorage.setItem('theme', 'light');
+          }
+          
+          // No need to remove transitions as they're now in the CSS
+        }, 10);
+        // Toggle icons
+        const icons = document.querySelectorAll('#theme-toggle i');
+        if (icons.length > 0) {
+          icons.forEach(icon => icon.classList.toggle('hidden'));
+        }
+      }
+      
+      // Initialize theme
+      function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+          setTheme(true);
+        } else {
+          setTheme(false);
+        }
+      }
+      
+      // Initialize theme and event listener
+      if (themeToggle) {
+        initTheme();
+        themeToggle.addEventListener('click', () => {
+          const isDark = !html.classList.contains('dark');
+          setTheme(isDark);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
