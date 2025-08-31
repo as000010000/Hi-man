@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="-webkit-tap-highlight-color: #40E0D0;">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -75,9 +75,9 @@
           draw() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            // Use navy blue in light theme, white in dark theme
+            // Use darker navy in light theme, white in dark theme
             const isDark = document.documentElement.classList.contains('dark');
-            const color = isDark ? '255, 255, 255' : '0, 0, 128';
+            const color = isDark ? '255, 255, 255' : '0, 0, 80';
             ctx.fillStyle = `rgba(${color}, ${this.opacity})`;
             ctx.fill();
           }
@@ -86,7 +86,9 @@
         // Create snowflakes
         function createSnowflakes() {
           flakes = [];
-          const count = Math.floor(window.innerWidth / 10);
+          const isDark = document.documentElement.classList.contains('dark');
+          // Fewer snowflakes in light theme
+          const count = Math.floor(window.innerWidth / (isDark ? 10 : 20));
           for (let i = 0; i < count; i++) {
             flakes.push(new Snowflake());
           }
@@ -413,7 +415,17 @@
     }
     
     /* Falling snowflakes */
-    .snowflakes { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .snowflakes { 
+      position: fixed; 
+      inset: 0; 
+      pointer-events: none; 
+      overflow: hidden; 
+      z-index: 0;
+    }
+    /* Hide snow in tech stack section */
+    #technology-stack .snowflakes {
+      display: none;
+    }
     .snowflake { position: absolute; top: -10%; color: hsl(var(--foreground) / 0.2); opacity: 0.8; will-change: transform; }
     @keyframes snowfall {
       0% { transform: translate3d(var(--x, 0), -10%, 0) rotate(0deg); }
@@ -423,9 +435,7 @@
     .snowflake { animation: snowfall var(--dur, 15s) linear infinite; font-size: var(--size, 14px); left: var(--left, 50%); animation-delay: var(--delay, 0s); }
     
     /* Gradient text */
-    .gradient-text,
-    ::selection,
-    ::-moz-selection {
+    .gradient-text {
       background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -433,12 +443,42 @@
       color: transparent;
     }
     
-    /* For better visibility of selected text */
-    ::selection,
-    ::-moz-selection {
-      background: linear-gradient(90deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.2));
-      -webkit-text-fill-color: inherit;
-      color: inherit;
+    /* Text selection styles */
+    html {
+      -webkit-tap-highlight-color: #40E0D0;
+    }
+    
+    /* Base selection styles */
+    ::selection {
+      background: #40E0D0;
+      color: #000;
+      text-shadow: none;
+    }
+    
+    /* Apply to all elements */
+    *,
+    *::selection,
+    *::-moz-selection,
+    *::-webkit-selection {
+      -webkit-tap-highlight-color: #40E0D0;
+    }
+    
+    /* Force selection color */
+    *::selection {
+      background: #40E0D0 !important;
+      color: #000 !important;
+      -webkit-text-fill-color: #000 !important;
+    }
+    
+    *::-moz-selection {
+      background: #40E0D0 !important;
+      color: #000 !important;
+    }
+    
+    *::-webkit-selection {
+      background: #40E0D0 !important;
+      color: #000 !important;
+      -webkit-text-fill-color: #000 !important;
     }
     
     /* Decorative elements */
