@@ -57,8 +57,8 @@
           reset() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * -100;
-            this.size = Math.random() * 3 + 2;
-            this.speed = Math.random() * 1 + 0.5;
+            this.size = Math.random() * 2 + 1; // Smaller snowflakes
+            this.speed = Math.random() * 0.8 + 0.3; // Slower falling speed
             this.angle = Math.random() * Math.PI * 2;
             this.opacity = Math.random() * 0.5 + 0.5;
           }
@@ -89,19 +89,41 @@
           }
         }
         
-        // Create snowflakes
+        // Create snowflakes with responsive sizing
         function createSnowflakes() {
+          // Cancel any ongoing animations to prevent memory leaks
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+          
           flakes = [];
           const isDark = document.documentElement.classList.contains('dark');
-          // Fewer and smaller snowflakes in light theme
-          const count = Math.floor(window.innerWidth / (isDark ? 8 : 30));
+          const isMobile = window.innerWidth < 768; // Mobile breakpoint
+          
+          // Adjust snowflake count based on screen size and theme
+          let count;
+          if (isMobile) {
+            count = Math.floor(window.innerWidth / (isDark ? 20 : 30)); // Fewer on mobile
+          } else {
+            count = Math.floor(window.innerWidth / (isDark ? 15 : 40));
+          }
+          
           for (let i = 0; i < count; i++) {
             const flake = new Snowflake();
-            if (!isDark) {
+            if (isMobile) {
+              // Make snowflakes smaller on mobile
+              flake.size = Math.random() * 1.5 + 0.5;
+              flake.speed = Math.random() * 0.6 + 0.2; // Slower on mobile
+            } else if (!isDark) {
               // Make snowflakes smaller in light theme
               flake.size = Math.random() * 2 + 1;
             }
             flakes.push(flake);
+          }
+          
+          // Restart animation
+          if (canvas) {
+            animate();
           }
         }
         
@@ -117,85 +139,190 @@
           animationId = requestAnimationFrame(animate);
         }
         
-        // Handle window resize
+        // Handle window resize with debounce
+        let resizeTimeout;
+        let resizeTimer;
+        
         function handleResize() {
-          resizeCanvas();
-          createSnowflakes();
+          // Clear the timeout if it exists
+          if (resizeTimeout) {
+            cancelAnimationFrame(resizeTimeout);
+          }
+          
+          // Debounce the resize handler
+          resizeTimeout = requestAnimationFrame(() => {
+            // Store current scroll position
+            const scrollY = window.scrollY;
+            
+            // Update canvas size and recreate snowflakes
+            resizeCanvas();
+            createSnowflakes();
+            
+            // Restore scroll position to prevent jumping
+            window.scrollTo(0, scrollY);
+          });
         }
         
         // Initialize
         resizeCanvas();
         createSnowflakes();
-        animate();
         
-        // Clean up on resize
-        window.addEventListener('resize', handleResize);
+        // Add optimized resize event listener
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(handleResize, 100);
+        });
+        
+        // Initial animation start
+        if (canvas) {
+          animate();
+        }
         
         // Clean up on unmount
         return () => {
           window.removeEventListener('resize', handleResize);
-          cancelAnimationFrame(animationId);
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+          clearTimeout(resizeTimer);
+          if (resizeTimeout) {
+            cancelAnimationFrame(resizeTimeout);
+          }
         };
       }
     });
   </script>
   
   <style>
-    /* Apply smooth transitions to all elements */
+    /* Theme transition settings */
+    :root {
+      --transition-duration: 100ms;
+      --transition-timing: ease;
+    }
+    
+    /* Theme transition styles */
+    /* Theme transition for background elements */
+    .theme-transition,
+    .theme-transition::before,
+    .theme-transition::after {
+      transition: 
+        background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    /* Text color transitions - simplified to prevent blinking */
+    .theme-transition {
+      transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                 border-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                 box-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    /* Force immediate text color changes without transition */
+    .theme-transition * {
+      transition: none !important;
+      color: inherit !important;
+    }
+    
+    /* Disable transitions during initial page load */
+    .no-transition,
+    .no-transition *,
+    .no-transition::before,
+    .no-transition::after {
+      transition: none !important;
+    }
+    
+    /* Ensure text colors are always visible and stable */
+    body {
+      color-scheme: light dark;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    
+    .text-foreground {
+      color: hsl(var(--foreground)) !important;
+      transition: none !important;
+    }
+    
+    /* Smooth background transitions only */
     html {
-      transition: background-color 2000ms ease-in-out, color 2000ms ease-in-out;
+      transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1);
+      color: inherit !important;
     }
     
+    /* Force text to stay solid during transitions */
     * {
-      transition: color 2000ms ease-in-out, 
-                 background-color 2000ms ease-in-out,
-                 border-color 2000ms ease-in-out,
-                 fill 2000ms ease-in-out,
-                 stroke 2000ms ease-in-out,
-                 opacity 2000ms ease-in-out;
+      transition: none !important;
+      color: inherit !important;
     }
     
-    /* Force transitions on all text and backgrounds */
-    body, h1, h2, h3, h4, h5, h6, p, a, span, div, section, header, footer, main, aside, nav, button, input, textarea, select, label, li, td, th, thead, tbody, tr, table, .text-\[\#0f172a\] {
-      transition: color 2000ms ease-in-out, 
-                 background-color 2000ms ease-in-out !important;
+    /* Background elements that should transition */
+    body,
+    .bg-background,
+    .bg-card,
+    .bg-muted,
+    .bg-popover,
+    .text-foreground,
+    .text-muted-foreground,
+    .border-border,
+    .bg-accent,
+    .text-accent-foreground,
+    .bg-primary,
+    .text-primary-foreground,
+    .bg-secondary,
+    .text-secondary-foreground,
+    .border,
+    .shadow {
+      transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow;
+      transition-duration: var(--transition-duration);
+      transition-timing-function: var(--transition-timing);
     }
     
     :root {
-      /* Light theme */
-      --background-light: 0 0% 100%;
-      --foreground-light: 223 30% 9%;
-      --card-light: 210 40% 98%;
-      --card-foreground-light: 223 30% 9%;
+      /* Base colors */
+      --primary: 192 100% 37%; /* #0099BC */
+      --accent: 174 51% 50%;
+      --destructive: 0 84.2% 60.2%;
+      --ring: 174 51% 50%;
+      --radius: 0.5rem;
       
-      /* Dark theme (default) */
+      /* Light theme (default) */
+      --background: 0 0% 100%;
+      --foreground: 223 30% 9%;
+      --card: 0 0% 100%;
+      --card-foreground: 223 30% 9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 223 30% 9%;
+      --primary-foreground: 0 0% 100%;
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 223 30% 9%;
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 223 30% 45%;
+      --accent-foreground: 0 0% 100%;
+      --destructive-foreground: 0 0% 100%;
+      --border: 223 30% 90%;
+      --input: 223 30% 90%;
+      --ring: 174 51% 50%;
+      
+      color-scheme: light;
+    }
+    
+    .dark {
       --background: 223 30% 9%;
       --foreground: 216 40% 95%;
       --card: 223 30% 14%;
       --card-foreground: 216 40% 95%;
-      
-      /* Set initial theme */
-      color-scheme: dark;
-      --background: var(--background);
-      --foreground: var(--foreground);
-      --card: var(--card);
-      --card-foreground: var(--card-foreground);
-      --popover: 223 30% 14%;
+      --popover: 223 30% 9%;
       --popover-foreground: 216 40% 95%;
-      --primary: 192 100% 37%; /* #0099BC */
       --primary-foreground: 223 52% 10%;
-      --secondary: 223 30% 20%;
+      --secondary: 223 30% 14%;
       --secondary-foreground: 216 40% 95%;
-      --muted: 223 30% 20%;
-      --muted-foreground: 216 40% 70%;
-      --accent: 174 51% 50%;
+      --muted: 223 30% 14%;
+      --muted-foreground: 216 40% 95%;
       --accent-foreground: 223 30% 10%;
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
       --border: 223 30% 25%;
       --input: 223 30% 25%;
-      --ring: 174 51% 50%;
-      --radius: 0.5rem;
+      color-scheme: dark;
     }
 
     /* Minimal token utility mappings to mimic the app's theme */
@@ -501,6 +628,139 @@
     
   </style>
   <style>
+    /* FAQ Styles */
+    .faq-section {
+      scroll-margin-top: 6rem;
+    }
+    
+    .faq-category {
+      background: hsl(var(--card));
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+    
+    .faq-category:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .faq-category-header {
+      padding: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: hsl(222 47% 11%/0.3); /* Navy background in dark mode */
+      transition: all 0.3s ease;
+    }
+    
+    .dark .faq-category-header {
+      background: hsl(222 47% 11%/0.5); /* Slightly more opaque navy in dark mode */
+    }
+    
+    .dark .faq-category-header:hover {
+      background: hsl(222 47% 11%/0.7);
+    }
+    
+    @media (prefers-color-scheme: light) {
+      .faq-category-header {
+        background: hsl(210 40% 96.1%/0.5); /* Light blue background in light mode */
+      }
+      .faq-category-header:hover {
+        background: hsl(210 40% 96.1%/0.8);
+      }
+    }
+    
+    .faq-category-header:hover {
+      background: hsl(var(--muted));
+    }
+    
+    .faq-category-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: hsl(var(--foreground));
+    }
+    
+    .faq-category-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    
+    .faq-category.active .faq-category-content {
+      max-height: 2000px; /* Adjust based on content */
+      transition: max-height 0.5s ease-in;
+    }
+    
+    .faq-item {
+      border-bottom: 1px solid hsl(var(--border));
+      transition: all 0.2s ease;
+    }
+    
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+    
+    .faq-question {
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+    
+    .faq-question:hover {
+      background: hsl(var(--secondary)/0.2);
+    }
+    
+    .faq-question h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: hsl(var(--foreground));
+      text-align: left;
+      flex: 1;
+    }
+    
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .faq-item.active .faq-answer {
+      max-height: 1000px; /* Adjust based on content */
+      padding: 0 1.5rem 1.5rem;
+      transition: max-height 0.5s ease-in, padding 0.3s ease;
+    }
+    
+    .faq-icon {
+      transition: transform 0.3s ease;
+      margin-left: 1rem;
+      flex-shrink: 0;
+    }
+    
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+    
+    .faq-category.active .faq-category-icon {
+      transform: rotate(180deg);
+    }
+    
+    .faq-category-icon {
+      transition: transform 0.3s ease;
+      margin-left: 1rem;
+    }
+    
     /* Particle styles */
     #particles-js {
       position: fixed;
@@ -520,8 +780,8 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-background text-foreground antialiased transition-colors duration-300">
-  <!-- Particles container -->
-  <div id="particles-js"></div>
+  <!-- Snow Canvas -->
+  <canvas id="snow" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
   <!-- Theme Toggle Button -->
   <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-full bg-card/80 hover:bg-accent hover:text-accent-foreground transition-all duration-200 shadow-lg z-[9999] border border-border/50" style="backdrop-filter: blur(8px);">
     <i data-lucide="moon" class="w-5 h-5"></i>
@@ -605,6 +865,280 @@
     </section>
 
 
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section w-full bg-gradient-to-br from-background via-secondary/10 to-background py-24 transition-theme">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
+          </div>
+          
+          <div class="space-y-6">
+            <!-- General Services -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>General Services</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>What services does SnowBaseStudio offer?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We specialize in custom website design, AI-powered web solutions, UX/UI design, web development, and ongoing site maintenance.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you work with businesses of all sizes?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes! We support startups, small businesses, and large enterprises alike.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can you redesign my existing website?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Absolutely. We offer website revamps to modernize your look and improve performance.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you build e-commerce websites?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can create secure, scalable online stores tailored to your business needs.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>What technologies do you use?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Our stack includes Python, SQL, React, Tailwind CSS, TypeScript, JavaScript, HTML5, Node.js, and CSS3.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project Process -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Project Process</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How does the design process work?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We start with a ideas session, move to wireframes and prototypes, and then build your site with your feedback and input at every step.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How long does it take to build a website?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Typical projects take 1–6 weeks, depending on complexity and requirements.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can I track project progress?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we provide regular updates and milestones so you're always informed.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do I own my website after it's completed?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, you receive full ownership of your website and its assets.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pricing & Payment -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Pricing & Payment</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How much does a website cost?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Pricing depends on your needs and project scope. Contact us for a custom quote.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you offer payment plans?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can split payments across project milestones.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Are there any ongoing costs?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Ongoing costs may include hosting, maintenance, or optional feature upgrades.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical & Support -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Technical & Support</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Will my website be mobile-friendly?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Upon request, sites can be fully responsive and optimized for mobile devices.</p>
+                  </div>
+                </div>
+                
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can you integrate third-party tools or APIs?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can connect your website to CRMs, payment gateways, analytics, and more.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security & Privacy -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Security & Privacy</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How do you handle my data and privacy?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We take data protection seriously and comply with all relevant regulations. Your data is only used for project purposes and never shared without consent.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Getting Started -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Getting Started</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How do I start a project with SnowBaseStudio?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Simply reach out via our contact form or email. We'll schedule a free consultation to discuss your goals.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>What do I need to provide before starting?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Any branding materials, content, or ideas you have. We'll guide you through the rest!</p>
+                  </div>
+                </div
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- Contact -->
     <section id="contact" class="w-full bg-gradient-to-br from-background via-secondary/20 to-background py-24 md:py-32 transition-theme">
       <div class="container mx-auto px-4">
@@ -663,7 +1197,7 @@
                 </div>
               </div>
               <button type="submit" class="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg font-medium hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2">
-                Send Message
+                Preview Email
               </button>
             </form>
             </div>
@@ -672,71 +1206,6 @@
       </div>
     </section>
   </main>
-  
-  <script>
-    // Technology Carousel - Auto-scrolling with circular reveal
-    document.addEventListener('DOMContentLoaded', function() {
-      const carousel = document.getElementById('techCarousel');
-      const items = document.querySelectorAll('.tech-item');
-      const itemWidth = 128; // Width of each item (w-24 + space-x-8 = 128px)
-      let scrollPosition = 0;
-      
-      // Clone items for infinite scrolling
-      items.forEach(item => {
-        const clone = item.cloneNode(true);
-        carousel.appendChild(clone);
-      });
-      
-      // Add circular reveal effect with better compatibility
-      const container = carousel.parentElement;
-      container.style.overflow = 'hidden';
-      container.style.position = 'relative';
-      container.style.borderRadius = '9999px';
-      
-      // Fallback for browsers that don't support mask
-      if (CSS.supports('mask', 'none') || CSS.supports('-webkit-mask', 'none')) {
-        container.style.mask = 'radial-gradient(circle at center, black 90%, transparent 100%)';
-        container.style.webkitMask = 'radial-gradient(circle at center, black 90%, transparent 100%)';
-      } else {
-        // Fallback: just show a regular carousel without masking
-        container.style.overflowX = 'auto';
-        container.style.scrollSnapType = 'x mandatory';
-        carousel.style.scrollSnapType = 'x mandatory';
-      }
-      
-      // Auto-scroll with consistent speed
-      const scrollSpeed = 0.5; // Consistent speed (lower = slower)
-      const totalWidth = items.length * itemWidth;
-      let lastTimestamp = 0;
-      
-      function animate(timestamp) {
-        if (!lastTimestamp) lastTimestamp = timestamp;
-        const delta = timestamp - lastTimestamp;
-        lastTimestamp = timestamp;
-        
-        scrollPosition = (scrollPosition + scrollSpeed * (delta / 16)) % totalWidth;
-        carousel.style.transform = `translateX(-${scrollPosition}px)`;
-        
-        // Add 3D effect to items based on their position
-        const visibleItems = document.querySelectorAll('.tech-item');
-        visibleItems.forEach((item) => {
-          const rect = item.getBoundingClientRect();
-          const center = window.innerWidth / 2;
-          const distance = Math.abs(rect.left + rect.width/2 - center);
-          const scale = 1 - Math.min(distance / 1000, 0.5);
-          const opacity = 1 - Math.min(distance / 500, 0.7);
-          item.style.transform = `scale(${scale})`;
-          item.style.opacity = opacity;
-          item.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-        });
-        
-        requestAnimationFrame(animate);
-      }
-      
-      // Start the animation with consistent timing
-      requestAnimationFrame(animate);
-    });
-  </script>
   
   <script>
     // Mobile menu toggle
@@ -755,6 +1224,84 @@
           item.addEventListener('click', () => {
             mobileMenu.classList.add('hidden');
           });
+        });
+      }
+    });
+
+    // Theme toggle functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      
+      // Function to set theme with smooth transition
+      function setTheme(isDark) {
+        const html = document.documentElement;
+        const isCurrentlyDark = html.classList.contains('dark');
+        
+        // Don't do anything if theme isn't changing
+        if (isDark === isCurrentlyDark) return;
+        
+        // Add transition class for smooth fade
+        html.classList.add('theme-transition');
+        
+        // Force a reflow to ensure the transition class is applied
+        document.body.offsetHeight;
+        
+        // Apply theme changes
+        if (isDark) {
+          html.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
+        } else {
+          html.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
+        }
+        
+        // Clean up transition class after transition completes
+        const onTransitionEnd = () => {
+          html.classList.remove('theme-transition');
+          html.removeEventListener('transitionend', onTransitionEnd);
+        };
+        
+        html.addEventListener('transitionend', onTransitionEnd);
+        
+        // Save preference
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        // Update icons
+        document.querySelectorAll('[data-lucide="moon"]').forEach(el => 
+          el.classList.toggle('hidden', isDark)
+        );
+        document.querySelectorAll('[data-lucide="sun"]').forEach(el => 
+          el.classList.toggle('hidden', !isDark)
+        );
+        
+        // Reinitialize particles after theme change
+        setTimeout(() => {
+          if (window.pJSDom && window.pJSDom.length > 0) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+          }
+          if (typeof initParticles === 'function') {
+            initParticles();
+          }
+        }, 100);
+      }
+      
+      // Initialize theme
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      if (savedTheme) {
+        setTheme(savedTheme === 'dark');
+      } else {
+        setTheme(prefersDarkScheme.matches);
+      }
+      
+      // Theme toggle click handler
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const isDark = !document.documentElement.classList.contains('dark');
+          setTheme(isDark);
         });
       }
     });
@@ -789,8 +1336,38 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   
   <script>
-    // Theme toggle and particles initialization
+    // Theme toggle, particles initialization, and FAQ functionality
     document.addEventListener('DOMContentLoaded', function() {
+      // FAQ Functionality
+      const faqCategories = document.querySelectorAll('.faq-category');
+      const faqItems = document.querySelectorAll('.faq-item');
+      
+      // Toggle FAQ category
+      faqCategories.forEach(category => {
+        const header = category.querySelector('.faq-category-header');
+        header.addEventListener('click', () => {
+          category.classList.toggle('active');
+        });
+      });
+      
+      // Toggle FAQ item
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+          // Close other items in the same category
+          const parentCategory = item.closest('.faq-category');
+          const allItemsInCategory = parentCategory.querySelectorAll('.faq-item');
+          allItemsInCategory.forEach(i => {
+            if (i !== item) i.classList.remove('active');
+          });
+          
+          // Toggle current item
+          item.classList.toggle('active');
+        });
+      });
+      
+      // Don't open any category by default
+      // Previously opened first category by default, now removed
       // Initialize particles
       function initParticles() {
         if (typeof particlesJS !== 'undefined') {
@@ -872,91 +1449,11 @@
       // Initialize particles on load
       initParticles();
       
-      // Theme toggle functionality
-      const themeToggle = document.getElementById('theme-toggle');
-      const html = document.documentElement;
-      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      // Theme initialization is now handled in the main script
       
-      // Reinitialize particles when theme changes
-      if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-          // Wait for theme to change
-          setTimeout(() => {
-            // Remove existing particles
-            if (window.pJSDom && window.pJSDom.length > 0) {
-              window.pJSDom[0].pJS.fn.vendors.destroypJS();
-              window.pJSDom = [];
-            }
-            // Reinitialize with new theme
-            initParticles();
-          }, 100);
-        });
-      }
-      
-      // Function to set theme
-      function setTheme(isDark) {
-        // Force a reflow to ensure transitions work
-        document.body.offsetHeight;
-        
-        // Toggle icons based on theme
-        const moonIcon = document.querySelector('[data-lucide="moon"]');
-        const sunIcon = document.querySelector('[data-lucide="sun"]');
-        
-        if (isDark) {
-          moonIcon.classList.add('hidden');
-          sunIcon.classList.remove('hidden');
-        } else {
-          moonIcon.classList.remove('hidden');
-          sunIcon.classList.add('hidden');
-        }
-        
-        // Set a small timeout to ensure the transition is applied before changing the theme
-        setTimeout(() => {
-          if (isDark) {
-            html.classList.add('dark');
-            html.style.setProperty('--background', '223 30% 9%');
-            html.style.setProperty('--foreground', '216 40% 95%');
-            html.style.setProperty('--card', '223 30% 14%');
-            html.style.setProperty('--card-foreground', '216 40% 95%');
-            localStorage.setItem('theme', 'dark');
-          } else {
-            html.classList.remove('dark');
-            html.style.setProperty('--background', '0 0% 100%');
-            html.style.setProperty('--foreground', '223 30% 9%');
-            html.style.setProperty('--card', '210 40% 98%');
-            html.style.setProperty('--card-foreground', '223 30% 9%');
-            localStorage.setItem('theme', 'light');
-          }
-          
-          // No need to remove transitions as they're now in the CSS
-        }, 10);
-        // Toggle icons
-        const icons = document.querySelectorAll('#theme-toggle i');
-        if (icons.length > 0) {
-          icons.forEach(icon => icon.classList.toggle('hidden'));
-        }
-      }
-      
-      // Initialize theme and event listener
-      if (themeToggle) {
-        // Load saved theme or use system preference
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-          setTheme(savedTheme === 'dark');
-        } else {
-          setTheme(prefersDarkScheme.matches);
-        }
-        
-        // Set up click handler
-        themeToggle.addEventListener('click', () => {
-          const isDark = !html.classList.contains('dark');
-          setTheme(isDark);
-        });
-        
-        // Initialize Lucide icons
-        if (window.lucide) {
-          lucide.createIcons();
-        }
+      // Initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
       }
     });
   </script>
