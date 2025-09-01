@@ -89,19 +89,41 @@
           }
         }
         
-        // Create snowflakes
+        // Create snowflakes with responsive sizing
         function createSnowflakes() {
+          // Cancel any ongoing animations to prevent memory leaks
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+          
           flakes = [];
           const isDark = document.documentElement.classList.contains('dark');
-          // Fewer snowflakes overall
-          const count = Math.floor(window.innerWidth / (isDark ? 15 : 40)); // Reduced snowflake count
+          const isMobile = window.innerWidth < 768; // Mobile breakpoint
+          
+          // Adjust snowflake count based on screen size and theme
+          let count;
+          if (isMobile) {
+            count = Math.floor(window.innerWidth / (isDark ? 20 : 30)); // Fewer on mobile
+          } else {
+            count = Math.floor(window.innerWidth / (isDark ? 15 : 40));
+          }
+          
           for (let i = 0; i < count; i++) {
             const flake = new Snowflake();
-            if (!isDark) {
+            if (isMobile) {
+              // Make snowflakes smaller on mobile
+              flake.size = Math.random() * 1.5 + 0.5;
+              flake.speed = Math.random() * 0.6 + 0.2; // Slower on mobile
+            } else if (!isDark) {
               // Make snowflakes smaller in light theme
               flake.size = Math.random() * 2 + 1;
             }
             flakes.push(flake);
+          }
+          
+          // Restart animation
+          if (canvas) {
+            animate();
           }
         }
         
@@ -117,24 +139,55 @@
           animationId = requestAnimationFrame(animate);
         }
         
-        // Handle window resize
+        // Handle window resize with debounce
+        let resizeTimeout;
+        let resizeTimer;
+        
         function handleResize() {
-          resizeCanvas();
-          createSnowflakes();
+          // Clear the timeout if it exists
+          if (resizeTimeout) {
+            cancelAnimationFrame(resizeTimeout);
+          }
+          
+          // Debounce the resize handler
+          resizeTimeout = requestAnimationFrame(() => {
+            // Store current scroll position
+            const scrollY = window.scrollY;
+            
+            // Update canvas size and recreate snowflakes
+            resizeCanvas();
+            createSnowflakes();
+            
+            // Restore scroll position to prevent jumping
+            window.scrollTo(0, scrollY);
+          });
         }
         
         // Initialize
         resizeCanvas();
         createSnowflakes();
-        animate();
         
-        // Clean up on resize
-        window.addEventListener('resize', handleResize);
+        // Add optimized resize event listener
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(handleResize, 100);
+        });
+        
+        // Initial animation start
+        if (canvas) {
+          animate();
+        }
         
         // Clean up on unmount
         return () => {
           window.removeEventListener('resize', handleResize);
-          cancelAnimationFrame(animationId);
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+          clearTimeout(resizeTimer);
+          if (resizeTimeout) {
+            cancelAnimationFrame(resizeTimeout);
+          }
         };
       }
     });
@@ -147,6 +200,30 @@
       --transition-timing: ease;
     }
     
+    /* Theme transition styles */
+    /* Theme transition for background elements */
+    .theme-transition,
+    .theme-transition::before,
+    .theme-transition::after {
+      transition: 
+        background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    /* Text color transitions - simplified to prevent blinking */
+    .theme-transition {
+      transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                 border-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                 box-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    /* Force immediate text color changes without transition */
+    .theme-transition * {
+      transition: none !important;
+      color: inherit !important;
+    }
+    
     /* Disable transitions during initial page load */
     .no-transition,
     .no-transition *,
@@ -155,13 +232,31 @@
       transition: none !important;
     }
     
-    /* Smooth theme transitions */
-    html {
-      transition: background-color var(--transition-duration) var(--transition-timing),
-                 color var(--transition-duration) var(--transition-timing);
+    /* Ensure text colors are always visible and stable */
+    body {
+      color-scheme: light dark;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
     
-    /* Elements that should transition */
+    .text-foreground {
+      color: hsl(var(--foreground)) !important;
+      transition: none !important;
+    }
+    
+    /* Smooth background transitions only */
+    html {
+      transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1);
+      color: inherit !important;
+    }
+    
+    /* Force text to stay solid during transitions */
+    * {
+      transition: none !important;
+      color: inherit !important;
+    }
+    
+    /* Background elements that should transition */
     body,
     .bg-background,
     .bg-card,
@@ -1138,10 +1233,19 @@
       const themeToggle = document.getElementById('theme-toggle');
       const html = document.documentElement;
       
-      // Function to set theme
+      // Function to set theme with smooth transition
       function setTheme(isDark) {
-        // First, disable transitions
-        document.documentElement.classList.add('no-transition');
+        const html = document.documentElement;
+        const isCurrentlyDark = html.classList.contains('dark');
+        
+        // Don't do anything if theme isn't changing
+        if (isDark === isCurrentlyDark) return;
+        
+        // Add transition class for smooth fade
+        html.classList.add('theme-transition');
+        
+        // Force a reflow to ensure the transition class is applied
+        document.body.offsetHeight;
         
         // Apply theme changes
         if (isDark) {
@@ -1152,13 +1256,13 @@
           document.documentElement.style.colorScheme = 'light';
         }
         
-        // Force reflow
-        document.body.offsetHeight;
+        // Clean up transition class after transition completes
+        const onTransitionEnd = () => {
+          html.classList.remove('theme-transition');
+          html.removeEventListener('transitionend', onTransitionEnd);
+        };
         
-        // Re-enable transitions
-        requestAnimationFrame(() => {
-          document.documentElement.classList.remove('no-transition');
-        });
+        html.addEventListener('transitionend', onTransitionEnd);
         
         // Save preference
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
