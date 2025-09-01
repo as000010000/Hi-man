@@ -79,6 +79,20 @@ export default function Home() {
           </div>
         </main>
         <Footer />
+
+        {/* Simple Contact Section at Bottom */}
+        <section className="w-full py-8 bg-background border-t border-border/40">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-muted-foreground mb-2">Ready to start your project?</p>
+            <a
+              href="mailto:hi@snowbasestudio.com"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium"
+            >
+              <Mail className="h-4 w-4" />
+              Contact us at hi@snowbasestudio.com
+            </a>
+          </div>
+        </section>
       </div>
     </>
   );
