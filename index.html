@@ -123,11 +123,11 @@
     }
 
     /* Enhanced card styles */
-    .card { 
-      border-radius: 1rem; 
-      box-shadow: 0 4px 6px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.06); 
-      padding: 2rem; 
-      background-color: hsl(var(--card)); 
+    .card {
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.06);
+      padding: 1.25rem;
+      background-color: hsl(var(--card));
       color: hsl(var(--card-foreground));
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid hsl(var(--border) / 0.5);
@@ -307,6 +307,82 @@
       background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%);
       z-index: -1;
     }
+    
+    /* Skeleton loading */
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: hsl(var(--secondary));
+      border-radius: 0.75rem;
+    }
+    .skeleton::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.06) 20%,
+        rgba(255,255,255,0.12) 60%,
+        rgba(255,255,255,0) 100%);
+      animation: skeleton-shimmer 1.2s infinite;
+    }
+    @keyframes skeleton-shimmer {
+      100% { transform: translateX(100%); }
+    }
+    .skeleton-text { height: 0.9rem; border-radius: 9999px; background: hsl(var(--secondary)); }
+    .skeleton-text.sm { height: 0.75rem; }
+    .skeleton-text.lg { height: 1.2rem; }
+    .skeleton-avatar { width: 3rem; height: 3rem; border-radius: 9999px; background: hsl(var(--secondary)); }
+
+    /* Progress bars with unique animations */
+    .progress {
+      height: 10px;
+      width: 100%;
+      background: hsl(var(--secondary));
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid hsl(var(--border) / 0.4);
+    }
+    .progress > .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+      border-radius: inherit;
+      transition: width 300ms ease;
+    }
+    /* Stripes */
+    .bar.stripes { background-size: 28px 28px; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0, rgba(255,255,255,0.25) 10px, transparent 10px, transparent 20px); }
+    .bar.stripes.animate { animation: move-stripes 1s linear infinite; }
+    @keyframes move-stripes { to { background-position: 28px 0; } }
+    /* Pulse */
+    .bar.pulse { filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.6)); animation: bar-pulse 1.2s ease-in-out infinite; }
+    @keyframes bar-pulse { 0%,100% { opacity: 0.85 } 50% { opacity: 1 } }
+    /* Easing bounce */
+    .bar.bounce { animation: bar-bounce 1.4s cubic-bezier(.68,-0.55,.27,1.55) infinite; }
+    @keyframes bar-bounce { 0% { transform: scaleX(.98) } 50% { transform: scaleX(1) } 100% { transform: scaleX(.98) } }
+
+    /* Brand spinner (snowflake) */
+    .spinner {
+      display: inline-grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      position: relative;
+    }
+    .spinner .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid hsl(var(--primary) / 0.25);
+      border-top-color: hsl(var(--accent));
+      animation: spin 1s linear infinite;
+    }
+    .spinner .ring.r2 { inset: 6px; border-top-color: hsl(var(--primary)); animation-duration: 1.6s; opacity: .9; }
+    .spinner .ring.r3 { inset: 12px; border-top-color: hsl(var(--accent)); animation-duration: 2.2s; opacity: .7; }
+    .spinner .flake { width: 26px; height: 26px; color: hsl(var(--primary)); filter: drop-shadow(0 2px 6px rgba(0,0,0,.3)); animation: flake-breathe 1.6s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes flake-breathe { 0%,100% { transform: scale(0.95); opacity: .9 } 50% { transform: scale(1.05); opacity: 1 } }
   </style>
 </head>
 <body class="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -347,7 +423,8 @@
       <!-- Desktop Nav -->
       <div class="hidden md:flex items-center space-x-6">
         <a href="#home" class="text-foreground/80 hover:text-foreground transition-colors">Home</a>
-        <a href="#technology-stack" class="text-foreground/80 hover:text-foreground transition-colors">Tech Stack</a>
+        <a href="#technology-stack" class="text-foreground/80 hover:text-foreground transition-colors">Integrations</a>
+        <a href="#faq" class="text-foreground/80 hover:text-foreground transition-colors">FAQ</a>
         <a href="#contact" class="text-foreground/80 hover:text-foreground transition-colors">Contact</a>
       </div>
 
@@ -362,7 +439,8 @@
     <div id="mobile-menu" class="md:hidden hidden border-t border-border bg-background">
       <div class="container mx-auto flex flex-col gap-4 p-4">
         <a href="#home" class="text-base font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors" data-close-menu>Home</a>
-        <a href="#technology-stack" class="text-base font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors" data-close-menu>Tech Stack</a>
+        <a href="#technology-stack" class="text-base font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors" data-close-menu>Integrations</a>
+        <a href="#faq" class="text-base font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors" data-close-menu>FAQ</a>
         <a href="#contact" class="btn btn-primary w-full mt-2" data-close-menu>Contact Us</a>
       </div>
     </div>
@@ -381,6 +459,71 @@
             We build intelligent systems that amplify human potential, turning your complex challenges into impactful, data-driven outcomes.
           </p>
           <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading UI Showcase -->
+    <section id="loading-ui" class="w-full bg-background py-20">
+      <div class="container mx-auto px-4">
+        <div class="mx-auto max-w-4xl text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            <span class="gradient-text">Loading UI Showcase</span>
+          </h2>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Skeleton screens, progress bars, and a custom Snowflake spinner while content loads.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Skeleton Card -->
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="skeleton-avatar skeleton"></div>
+              <div class="flex-1 space-y-2">
+                <div class="skeleton skeleton-text lg" data-skeleton data-loaded="<span class='font-semibold'>SnowBase Studio</span>"></div>
+                <div class="skeleton skeleton-text" data-skeleton data-loaded="<span class='text-muted-foreground'>AI Development</span>"></div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <div class="skeleton skeleton-text" data-skeleton></div>
+              <div class="skeleton skeleton-text sm" data-skeleton></div>
+              <div class="skeleton skeleton-text" data-skeleton></div>
+            </div>
+          </div>
+
+          <!-- Progress Bars -->
+          <div class="card space-y-6">
+            <div>
+              <div class="flex items-center justify-between mb-2"><span class="text-sm text-muted-foreground">Deploying</span><span class="text-sm" data-progress-label>0%</span></div>
+              <div class="progress" data-progress>
+                <div class="bar stripes animate" style="width:0%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2"><span class="text-sm text-muted-foreground">Indexing</span><span class="text-sm" data-progress-label>0%</span></div>
+              <div class="progress" data-progress>
+                <div class="bar pulse" style="width:0%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2"><span class="text-sm text-muted-foreground">Optimizing</span><span class="text-sm" data-progress-label>0%</span></div>
+              <div class="progress" data-progress>
+                <div class="bar bounce" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Spinner -->
+          <div class="card flex flex-col items-center justify-center gap-4">
+            <div class="spinner">
+              <div class="ring r1"></div>
+              <div class="ring r2"></div>
+              <div class="ring r3"></div>
+              <i data-lucide="snowflake" class="flake"></i>
+            </div>
+            <p class="text-muted-foreground">Loading SnowBase experience…</p>
           </div>
         </div>
       </div>
@@ -414,84 +557,222 @@
       </div>
     </section>
 
-    <!-- Technology Stack Bento Grid -->
+    <!-- Integrations -->
     <section id="technology-stack" class="w-full bg-gradient-to-br from-secondary to-background py-24">
       <div class="container mx-auto px-4">
         <div class="mx-auto max-w-4xl text-center mb-16">
           <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            <span class="gradient-text">Our Technology Stack</span>
+            <span class="gradient-text">Integrations</span>
           </h2>
           <p class="text-lg text-muted-foreground max-w-3xl mx-auto">
-            We work with industry-leading technologies to deliver cutting-edge solutions.
+            We integrate with all your favorite tools and platforms to create a seamless ecosystem for your business.
           </p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto">
-          <!-- Row 1 -->
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" loading="lazy">
-              <h3>Python</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="SQL" loading="lazy">
-              <h3>SQL</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" loading="lazy">
-              <h3>React</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS" loading="lazy">
-              <h3>Tailwind CSS</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" loading="lazy">
-              <h3>TypeScript</h3>
+        
+        <!-- Integration Logos Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <!-- GitHub -->
+          <div class="bento-card group flex items-center justify-center p-6">
+            <div class="bento-content flex flex-col items-center">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" loading="lazy" class="h-16 w-16 mb-3">
+              <h3 class="text-sm font-medium text-center">GitHub</h3>
             </div>
           </div>
           
-          <!-- Row 2 -->
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" loading="lazy">
-              <h3>JavaScript</h3>
+          <!-- MongoDB -->
+          <div class="bento-card group flex items-center justify-center p-6">
+            <div class="bento-content flex flex-col items-center">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" loading="lazy" class="h-16 w-16 mb-3">
+              <h3 class="text-sm font-medium text-center">MongoDB</h3>
             </div>
           </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" loading="lazy">
-              <h3>HTML5</h3>
+          
+          <!-- PostgreSQL -->
+          <div class="bento-card group flex items-center justify-center p-6">
+            <div class="bento-content flex flex-col items-center">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" loading="lazy" class="h-16 w-16 mb-3">
+              <h3 class="text-sm font-medium text-center">PostgreSQL</h3>
             </div>
           </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" loading="lazy">
-              <h3>GitHub</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" loading="lazy">
-              <h3>Node.js</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" loading="lazy">
-              <h3>CSS3</h3>
+          
+          <!-- Neon -->
+          <div class="bento-card group flex items-center justify-center p-6">
+            <div class="bento-content flex flex-col items-center">
+              <img src="https://cdn.gamma.app/0q3kwkx42ofh0ga/c12efcb2f7f845c497224b2bd1130ade/original/neon-logo.png.png" alt="Neon" loading="lazy" class="h-16 w-16 mb-3 rounded-full object-cover">
+              <h3 class="text-sm font-medium text-center">Neon</h3>
             </div>
           </div>
         </div>
+        </div>
         
-        
+        <div class="text-center mt-12">
+          <p class="text-muted-foreground text-sm">
+            And many more integrations available upon request
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="w-full bg-gradient-to-br from-background via-secondary/30 to-background py-16 md:py-20">
+      <div class="container mx-auto px-4">
+        <div class="mx-auto max-w-4xl text-center mb-12">
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+            <span class="gradient-text">Frequently Asked Questions</span>
+          </h2>
+          <p class="text-base text-muted-foreground max-w-2xl mx-auto">
+            Everything you need to know about our services and process.
+          </p>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-3">
+          <!-- General Services -->
+          <div class="bg-card rounded-lg border border-border/40">
+            <button class="faq-question w-full flex justify-between items-center py-3 px-4 text-left font-medium text-primary hover:bg-primary/5 transition-colors">
+              <span class="flex items-center gap-2 text-sm">
+                <i data-lucide="settings" class="h-4 w-4"></i>
+                General Services
+              </span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden space-y-3 mt-1 px-4 pb-4">
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">What services does SnowBaseStudio offer?</p>
+                <p class="text-muted-foreground text-xs">We specialize in custom website design, AI-powered web solutions, UX/UI design, web development, and ongoing site maintenance.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Do you work with businesses of all sizes?</p>
+                <p class="text-muted-foreground text-xs">Yes! We support startups, small businesses, and large enterprises alike.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Can you redesign my existing website?</p>
+                <p class="text-muted-foreground text-xs">Absolutely. We offer website revamps to modernize your look and improve performance.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Do you build e-commerce websites?</p>
+                <p class="text-muted-foreground text-xs">Yes, we can create secure, scalable online stores tailored to your business needs.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Process -->
+          <div class="bg-card rounded-lg border border-border/40">
+            <button class="faq-question w-full flex justify-between items-center py-3 px-4 text-left font-medium text-primary hover:bg-primary/5 transition-colors">
+              <span class="flex items-center gap-2 text-sm">
+                <i data-lucide="workflow" class="h-4 w-4"></i>
+                Project Process
+              </span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden space-y-3 mt-1 px-4 pb-4">
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">How does the design process work?</p>
+                <p class="text-muted-foreground text-xs">We start with a discovery session, move to wireframes and prototypes, and then build your site with your feedback at every step.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">How long does it take to build a website?</p>
+                <p class="text-muted-foreground text-xs">Typical projects take 2 days–6 weeks, depending on complexity and requirements.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Can I track project progress?</p>
+                <p class="text-muted-foreground text-xs">Yes, we provide regular updates and milestones so you're always informed.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Do I own my website after it's completed?</p>
+                <p class="text-muted-foreground text-xs">Yes, you receive full ownership of your website and its assets.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing & Payment -->
+          <div class="bg-card rounded-lg border border-border/40">
+            <button class="faq-question w-full flex justify-between items-center py-3 px-4 text-left font-medium text-primary hover:bg-primary/5 transition-colors">
+              <span class="flex items-center gap-2 text-sm">
+                <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+                Pricing & Payment
+              </span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden space-y-3 mt-1 px-4 pb-4">
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">How much does a website cost?</p>
+                <p class="text-muted-foreground text-xs">Pricing depends on your needs and project scope. Contact us for a custom quote.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Do you offer payment plans?</p>
+                <p class="text-muted-foreground text-xs">Yes, we can split payments across project milestones.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Are there any ongoing costs?</p>
+                <p class="text-muted-foreground text-xs">Ongoing costs may include hosting, maintenance, or optional feature upgrades.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Technical & Support -->
+          <div class="bg-card rounded-lg border border-border/40">
+            <button class="faq-question w-full flex justify-between items-center py-3 px-4 text-left font-medium text-primary hover:bg-primary/5 transition-colors">
+              <span class="flex items-center gap-2 text-sm">
+                <i data-lucide="wrench" class="h-4 w-4"></i>
+                Technical & Support
+              </span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden space-y-3 mt-1 px-4 pb-4">
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Will my website be mobile-friendly?</p>
+                <p class="text-muted-foreground text-xs">Absolutely. All our sites are fully responsive and optimized for mobile devices.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Can you help with website hosting and domain registration?</p>
+                <p class="text-muted-foreground text-xs">Yes, we can assist with hosting, domain setup, and website deployment.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">Can you integrate third-party tools or APIs?</p>
+                <p class="text-muted-foreground text-xs">Yes, we can connect your website to CRMs, payment gateways, analytics, and more.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security & Privacy -->
+          <div class="bg-card rounded-lg border border-border/40">
+            <button class="faq-question w-full flex justify-between items-center py-3 px-4 text-left font-medium text-primary hover:bg-primary/5 transition-colors">
+              <span class="flex items-center gap-2 text-sm">
+                <i data-lucide="shield" class="h-4 w-4"></i>
+                Security & Privacy
+              </span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden space-y-3 mt-1 px-4 pb-4">
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">How do you handle my data and privacy?</p>
+                <p class="text-muted-foreground text-xs">We follow strict privacy policies and never share your information without consent.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Getting Started -->
+          <div class="bg-card rounded-lg border border-border/40">
+            <button class="faq-question w-full flex justify-between items-center py-3 px-4 text-left font-medium text-primary hover:bg-primary/5 transition-colors">
+              <span class="flex items-center gap-2 text-sm">
+                <i data-lucide="rocket" class="h-4 w-4"></i>
+                Getting Started
+              </span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden space-y-3 mt-1 px-4 pb-4">
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">How do I start a project with SnowBaseStudio?</p>
+                <p class="text-muted-foreground text-xs">Simply reach out via our email. We'll schedule a free consultation to discuss your goals.</p>
+              </div>
+              <div class="text-sm">
+                <p class="font-medium text-primary mb-1">What do I need to provide before starting?</p>
+                <p class="text-muted-foreground text-xs">Any branding materials, content, or ideas you have. We'll guide you through the rest!</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -671,6 +952,162 @@
           });
         });
       }
+      
+      // FAQ dropdown functionality
+      const faqQuestions = document.querySelectorAll('.faq-question');
+      faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+          const answer = question.nextElementSibling;
+          const icon = question.querySelector('i[data-lucide="chevron-down"]');
+          
+          // Toggle answer visibility
+          answer.classList.toggle('hidden');
+          
+          // Rotate icon
+          if (answer.classList.contains('hidden')) {
+            icon.style.transform = 'rotate(0deg)';
+          } else {
+            icon.style.transform = 'rotate(180deg)';
+          }
+        });
+      });
+    });
+    
+    // 3D Technology Carousel
+    document.addEventListener('DOMContentLoaded', () => {
+      const carousel = document.getElementById('tech-carousel');
+      const items = carousel.querySelectorAll('.carousel-item');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      
+      const itemCount = items.length;
+      const angle = 360 / itemCount;
+      let currentRotation = 0;
+      let autoRotateInterval;
+      
+      // Position items in a circle
+      function positionItems() {
+        items.forEach((item, i) => {
+          const rotateY = angle * i + currentRotation;
+          const radius = window.innerWidth < 768 ? 120 : 180; // Smaller radius on mobile
+          
+          // Calculate position using trigonometry
+          const x = Math.sin(rotateY * Math.PI / 180) * radius;
+          const z = Math.cos(rotateY * Math.PI / 180) * radius;
+          
+          // Apply 3D transformation
+          item.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px)`;
+          
+          // Adjust opacity and scale based on position
+          const absZ = Math.abs(z);
+          const maxRadius = radius;
+          const opacity = 0.6 + 0.4 * (1 - absZ / maxRadius);
+          const scale = 0.8 + 0.2 * (1 - absZ / maxRadius);
+          
+          item.style.opacity = opacity;
+          item.style.transform += ` scale(${scale})`;
+          
+          // Add active class to front item
+          if (Math.abs(z - radius) < 10) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      }
+      
+      // Rotate carousel
+      function rotateCarousel(direction) {
+        currentRotation += angle * direction;
+        positionItems();
+      }
+      
+      // Auto-rotate
+      function startAutoRotate() {
+        clearInterval(autoRotateInterval);
+        autoRotateInterval = setInterval(() => {
+          rotateCarousel(1);
+        }, 3000);
+      }
+      
+      // Stop auto-rotate
+      function stopAutoRotate() {
+        clearInterval(autoRotateInterval);
+      }
+      
+      // Initialize
+      positionItems();
+      startAutoRotate();
+      
+      // Event listeners
+      prevBtn.addEventListener('click', () => {
+        rotateCarousel(-1);
+        stopAutoRotate();
+        startAutoRotate(); // Restart auto-rotate
+      });
+      
+      nextBtn.addEventListener('click', () => {
+        rotateCarousel(1);
+        stopAutoRotate();
+        startAutoRotate(); // Restart auto-rotate
+      });
+      
+      // Handle window resize
+      window.addEventListener('resize', positionItems);
+    });
+    
+    // FAQ Dropdowns
+    document.addEventListener('DOMContentLoaded', () => {
+      const faqQuestions = document.querySelectorAll('.faq-question');
+      
+      faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+          const answer = question.nextElementSibling;
+          const icon = question.querySelector('i:last-child');
+          
+          // Toggle answer visibility
+          if (answer.classList.contains('hidden')) {
+            answer.classList.remove('hidden');
+            icon.style.transform = 'rotate(180deg)';
+          } else {
+            answer.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+          }
+        });
+      });
+    });
+  </script>
+  
+  <!-- Loading UI demo logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Animate progress bars
+      const progressGroups = document.querySelectorAll('#loading-ui [data-progress]');
+      progressGroups.forEach((wrapper, idx) => {
+        const bar = wrapper.querySelector('.bar');
+        const label = wrapper.parentElement.querySelector('[data-progress-label]');
+        let p = 0;
+        const step = 2 + idx; // varied speeds
+        const t = setInterval(() => {
+          p = Math.min(100, p + step);
+          bar.style.width = p + '%';
+          if (label) label.textContent = p + '%';
+          if (p >= 100) clearInterval(t);
+        }, 120);
+      });
+
+      // Simulate skeleton replacement
+      setTimeout(() => {
+        document.querySelectorAll('#loading-ui [data-skeleton]').forEach(el => {
+          el.classList.remove('skeleton');
+          const html = el.getAttribute('data-loaded');
+          if (html) el.outerHTML = html; // replace with provided content
+        });
+        // Re-init lucide in case we injected icons
+        if (window.lucide && window.lucide.createIcons) {
+          lucide.createIcons();
+        }
+      }, 1800);
     });
   </script>
   
@@ -705,6 +1142,59 @@
     
     .animation-delay-2000 {
       animation-delay: 2s;
+    }
+    
+    /* 3D Carousel Styles */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    
+    .carousel {
+      transform-style: preserve-3d;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: hsl(var(--secondary)); /* Dark background */
+      border-radius: 1rem;
+      animation: rotate 30s infinite linear;
+    }
+    
+    .carousel-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      transform: translate(-50%, -50%);
+      background: hsl(var(--card)); /* Card background */
+      border-radius: 1rem;
+    }
+    
+    .carousel-item:hover {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1) !important;
+      z-index: 10;
+    }
+    
+    .carousel-item.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+    
+    @keyframes rotate {
+      from {
+        transform: rotateY(0deg) rotateX(10deg);
+      }
+      to {
+        transform: rotateY(360deg) rotateX(10deg);
+      }
+    }
+    
+    /* Pause animation on hover */
+    .carousel-wrapper:hover .carousel {
+      animation-play-state: paused;
     }
   </style>
 </body>
