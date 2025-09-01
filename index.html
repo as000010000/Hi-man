@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="-webkit-tap-highlight-color: #40E0D0;">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SnowBase Studio | AI Development</title>
-  <link rel="icon" href="favicon.ico" />
+  <title>SnowBase Studio | Website Development</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="favicon.ico" />
   <meta name="description" content="SnowBase Studio is a premium AI development company creating high-converting solutions." />
   <meta name="keywords" content="AI development, machine learning, data analytics, AI consulting, SnowBase Studio">
   
@@ -28,29 +30,159 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <script>
-    // Initialize Lucide icons when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-      if (window.lucide && window.lucide.createIcons) {
-        lucide.createIcons();
-      }
-      // Re-initialize icons after a short delay to ensure they load
-      setTimeout(() => {
-        if (window.lucide && window.lucide.createIcons) {
-          lucide.createIcons();
+      // Initialize Lucide Icons
+      lucide.createIcons();
+      
+      // Initialize snow animation
+      const canvas = document.getElementById('snow');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let animationId;
+        let flakes = [];
+        
+        // Set canvas size
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
         }
-      }, 1000);
+        
+        // Snowflake class
+        class Snowflake {
+          constructor() {
+            this.reset();
+            this.y = Math.random() * canvas.height;
+          }
+          
+          reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * -100;
+            this.size = Math.random() * 3 + 2;
+            this.speed = Math.random() * 1 + 0.5;
+            this.angle = Math.random() * Math.PI * 2;
+            this.opacity = Math.random() * 0.5 + 0.5;
+          }
+          
+          update() {
+            this.y += this.speed;
+            this.x += Math.sin(this.angle) * 0.5;
+            this.angle += 0.01;
+            
+            if (this.y > canvas.height) {
+              this.reset();
+              this.y = -10;
+            }
+          }
+          
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            // Use #00D7E6 in light theme, white in dark theme
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+              ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            } else {
+              // Convert #00D7E6 to RGB for rgba
+              ctx.fillStyle = `rgba(0, 215, 230, ${this.opacity})`;
+            }
+            ctx.fill();
+          }
+        }
+        
+        // Create snowflakes
+        function createSnowflakes() {
+          flakes = [];
+          const isDark = document.documentElement.classList.contains('dark');
+          // Fewer and smaller snowflakes in light theme
+          const count = Math.floor(window.innerWidth / (isDark ? 8 : 30));
+          for (let i = 0; i < count; i++) {
+            const flake = new Snowflake();
+            if (!isDark) {
+              // Make snowflakes smaller in light theme
+              flake.size = Math.random() * 2 + 1;
+            }
+            flakes.push(flake);
+          }
+        }
+        
+        // Animation loop
+        function animate() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          flakes.forEach(flake => {
+            flake.update();
+            flake.draw();
+          });
+          
+          animationId = requestAnimationFrame(animate);
+        }
+        
+        // Handle window resize
+        function handleResize() {
+          resizeCanvas();
+          createSnowflakes();
+        }
+        
+        // Initialize
+        resizeCanvas();
+        createSnowflakes();
+        animate();
+        
+        // Clean up on resize
+        window.addEventListener('resize', handleResize);
+        
+        // Clean up on unmount
+        return () => {
+          window.removeEventListener('resize', handleResize);
+          cancelAnimationFrame(animationId);
+        };
+      }
     });
   </script>
   
   <style>
+    /* Apply smooth transitions to all elements */
+    html {
+      transition: background-color 2000ms ease-in-out, color 2000ms ease-in-out;
+    }
+    
+    * {
+      transition: color 2000ms ease-in-out, 
+                 background-color 2000ms ease-in-out,
+                 border-color 2000ms ease-in-out,
+                 fill 2000ms ease-in-out,
+                 stroke 2000ms ease-in-out,
+                 opacity 2000ms ease-in-out;
+    }
+    
+    /* Force transitions on all text and backgrounds */
+    body, h1, h2, h3, h4, h5, h6, p, a, span, div, section, header, footer, main, aside, nav, button, input, textarea, select, label, li, td, th, thead, tbody, tr, table, .text-\[\#0f172a\] {
+      transition: color 2000ms ease-in-out, 
+                 background-color 2000ms ease-in-out !important;
+    }
+    
     :root {
+      /* Light theme */
+      --background-light: 0 0% 100%;
+      --foreground-light: 223 30% 9%;
+      --card-light: 210 40% 98%;
+      --card-foreground-light: 223 30% 9%;
+      
+      /* Dark theme (default) */
       --background: 223 30% 9%;
       --foreground: 216 40% 95%;
       --card: 223 30% 14%;
       --card-foreground: 216 40% 95%;
+      
+      /* Set initial theme */
+      color-scheme: dark;
+      --background: var(--background);
+      --foreground: var(--foreground);
+      --card: var(--card);
+      --card-foreground: var(--card-foreground);
       --popover: 223 30% 14%;
       --popover-foreground: 216 40% 95%;
-      --primary: 216 47% 80%;
+      --primary: 192 100% 37%; /* #0099BC */
       --primary-foreground: 223 52% 10%;
       --secondary: 223 30% 20%;
       --secondary-foreground: 216 40% 95%;
@@ -294,7 +426,17 @@
     }
     
     /* Falling snowflakes */
-    .snowflakes { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .snowflakes { 
+      position: fixed; 
+      inset: 0; 
+      pointer-events: none; 
+      overflow: hidden; 
+      z-index: 0;
+    }
+    /* Hide snow in tech stack section */
+    #technology-stack .snowflakes {
+      display: none;
+    }
     .snowflake { position: absolute; top: -10%; color: hsl(var(--foreground) / 0.2); opacity: 0.8; will-change: transform; }
     @keyframes snowfall {
       0% { transform: translate3d(var(--x, 0), -10%, 0) rotate(0deg); }
@@ -309,6 +451,45 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      color: transparent;
+    }
+    
+    /* Text selection styles */
+    html {
+      -webkit-tap-highlight-color: #00D7E6;
+    }
+    
+    /* Base selection styles */
+    ::selection {
+      background: #00D7E6;
+      color: #000;
+      text-shadow: none;
+    }
+    
+    /* Apply to all elements */
+    *,
+    *::selection,
+    *::-moz-selection,
+    *::-webkit-selection {
+      -webkit-tap-highlight-color: #00D7E6;
+    }
+    
+    /* Force selection color */
+    *::selection {
+      background: #00D7E6 !important;
+      color: #000 !important;
+      -webkit-text-fill-color: #000 !important;
+    }
+    
+    *::-moz-selection {
+      background: #00D7E6 !important;
+      color: #000 !important;
+    }
+    
+    *::-webkit-selection {
+      background: #00D7E6 !important;
+      color: #000 !important;
+      -webkit-text-fill-color: #000 !important;
     }
     
     /* Decorative elements */
@@ -316,354 +497,248 @@
       position: absolute;
       border-radius: 50%;
       background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%);
-      z-index: -1;
+    }
+    
+  </style>
+  <style>
+    /* Particle styles */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    /* Adjust z-index of main content */
+    main {
+      position: relative;
+      z-index: 1;
     }
   </style>
 </head>
-<body class="min-h-screen bg-background text-foreground overflow-x-hidden">
-  <!-- Decorative background elements -->
-  <div class="decorative-circle w-64 h-64 -top-32 -left-32"></div>
-  <div class="decorative-circle w-96 h-96 -bottom-48 -right-48"></div>
-  
-  <canvas id="snow" aria-hidden="true"></canvas>
-  <!-- Global falling snowflakes (visible site-wide) -->
-  <div class="snowflakes" aria-hidden="true">
-    <span class="snowflake" style="--left:3%; --size:14px; --dur:18s; --delay:-2s">❄</span>
-    <span class="snowflake" style="--left:8%; --size:10px; --dur:14s; --delay:-6s">❄</span>
-    <span class="snowflake" style="--left:14%; --size:16px; --dur:20s; --delay:-4s">❄</span>
-    <span class="snowflake" style="--left:20%; --size:12px; --dur:17s; --delay:-8s">❄</span>
-    <span class="snowflake" style="--left:27%; --size:13px; --dur:19s; --delay:-3s">❄</span>
-    <span class="snowflake" style="--left:33%; --size:9px; --dur:15s; --delay:-5s">❄</span>
-    <span class="snowflake" style="--left:40%; --size:18px; --dur:22s; --delay:-7s">❄</span>
-    <span class="snowflake" style="--left:47%; --size:11px; --dur:16s; --delay:-1s">❄</span>
-    <span class="snowflake" style="--left:54%; --size:14px; --dur:18s; --delay:-9s">❄</span>
-    <span class="snowflake" style="--left:61%; --size:12px; --dur:17s; --delay:-6s">❄</span>
-    <span class="snowflake" style="--left:69%; --size:15px; --dur:20s; --delay:-2s">❄</span>
-    <span class="snowflake" style="--left:76%; --size:10px; --dur:14s; --delay:-4s">❄</span>
-    <span class="snowflake" style="--left:83%; --size:17px; --dur:21s; --delay:-8s">❄</span>
-    <span class="snowflake" style="--left:90%; --size:13px; --dur:18s; --delay:-5s">❄</span>
-    <span class="snowflake" style="--left:96%; --size:12px; --dur:16s; --delay:-3s">❄</span>
-  </div>
+<body class="min-h-screen flex flex-col bg-background text-foreground antialiased transition-colors duration-300">
+  <!-- Particles container -->
+  <div id="particles-js"></div>
+  <!-- Theme Toggle Button -->
+  <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-full bg-card/80 hover:bg-accent hover:text-accent-foreground transition-all duration-200 shadow-lg z-[9999] border border-border/50" style="backdrop-filter: blur(8px);">
+    <i data-lucide="moon" class="w-5 h-5"></i>
+    <i data-lucide="sun" class="w-5 h-5 hidden"></i>
+  </button>
   
   <!-- Header -->
   <header id="site-header" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
     <div class="container mx-auto flex h-16 items-center justify-between px-4">
       <a href="#home" class="flex items-center gap-2 group">
-        <img src="favicon.ico" alt="SnowBase Studio logo" class="h-8 w-8 transition-transform group-hover:rotate-12" />
+        <img src="logo.png" alt="SnowBase Studio logo" class="h-8 w-auto transition-transform duration-300 group-hover:rotate-12" />
         <span class="text-xl font-bold">
           <span class="gradient-text">SnowBase</span><span class="text-foreground">Studio</span>
         </span>
       </a>
 
-      <!-- Desktop Nav -->
-      <div class="hidden md:flex items-center space-x-6">
-        <a href="#home" class="text-foreground/80 hover:text-foreground transition-colors">Home</a>
-        <a href="#technology-stack" class="text-foreground/80 hover:text-foreground transition-colors">Tech Stack</a>
-        <a href="#contact" class="text-foreground/80 hover:text-foreground transition-colors">Contact</a>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <!-- Mobile Menu Button -->
-        <button id="menu-btn" class="md:hidden rounded-lg border border-border p-2 hover:bg-primary/10 transition-colors" aria-label="Toggle navigation">
-          <i data-lucide="menu" class="h-6 w-6"></i>
-        </button>
-      </div>
+      <!-- Navigation removed -->
+      <div class="flex-1"></div> <!-- Spacer to push theme toggle to right -->
     </div>
-    <!-- Mobile Nav -->
-    <div id="mobile-menu" class="md:hidden hidden border-t border-border bg-background">
-      <div class="container mx-auto flex flex-col gap-4 p-4">
-        <a href="#home" class="text-base font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors" data-close-menu>Home</a>
-        <a href="#technology-stack" class="text-base font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors" data-close-menu>Tech Stack</a>
-        <a href="#contact" class="btn btn-primary w-full mt-2" data-close-menu>Contact Us</a>
-      </div>
-    </div>
+    <!-- Mobile Nav Removed -->
   </header>
 
   <main class="relative z-10 flex-1">
     <!-- Hero -->
-    <section id="home" class="relative overflow-hidden w-full bg-gradient-to-br from-background via-secondary to-background py-28 md:py-36 lg:py-44">
+    <section id="home" class="relative overflow-hidden w-full bg-gradient-to-br from-background via-secondary to-background py-28 md:py-36 lg:py-44 transition-theme">
       
       <div class="relative z-10 container mx-auto px-4 md:px-6">
         <div class="mx-auto max-w-4xl text-center">
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-            <span class="gradient-text">Give Your Business</span> The Website It Deserves
+            <span class="text-foreground">Give Your Business</span> The Website It Deserves
           </h1>
           <p class="mt-6 text-lg md:text-xl leading-8 text-muted-foreground max-w-2xl mx-auto">
-            We build intelligent systems that amplify human potential, turning your complex challenges into impactful, data-driven outcomes.
+            We craft beautiful, responsive websites that elevate your online presence, turning your vision into a powerful digital experience that drives results for your business.
           </p>
-          <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           </div>
         </div>
       </div>
     </section>
 
     <!-- Services -->
-    <section id="services" class="w-full bg-background py-24 md:py-32">
+    <section id="services" class="w-full bg-background pt-0 pb-16 md:pb-24">
       <div class="container mx-auto px-4">
-        <div class="mx-auto max-w-3xl text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            <span class="gradient-text">Our Core Services</span>
-          </h2>
-          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We provide a comprehensive suite of AI services to transform your business.
-          </p>
-        </div>
-        <div class="mt-16 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-8 mx-auto max-w-2xl">
-          <!-- Card 3 -->
-          <div class="card text-center group mx-auto">
-            <div class="mx-auto rounded-full bg-primary/10 p-5 w-fit transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
-              <div class="h-14 w-14 flex items-center justify-center">
-                <i data-lucide="paintbrush" class="h-8 w-8 text-primary"></i>
-              </div>
-            </div>
-            <h3 class="mt-6 text-xl font-bold group-hover:text-primary transition-colors">Custom AI Development</h3>
-            <p class="mt-4 text-base text-muted-foreground">From natural language processing to computer vision, we build bespoke AI applications tailored to your unique operational needs and challenges.</p>
-          </div>
-          
-          
-        </div>
-      </div>
-    </section>
-
-    <!-- Technology Stack Bento Grid -->
-    <section id="technology-stack" class="w-full bg-gradient-to-br from-secondary to-background py-24">
-      <div class="container mx-auto px-4">
-        <div class="mx-auto max-w-4xl text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            <span class="gradient-text">Our Technology Stack</span>
+        <div class="mx-auto max-w-4xl text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-foreground">
+            Our Web Development Services
           </h2>
           <p class="text-lg text-muted-foreground max-w-3xl mx-auto">
-            We work with industry-leading technologies to deliver cutting-edge solutions.
+            We create stunning, high-performance websites that help your business stand out and grow online.
           </p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto">
-          <!-- Row 1 -->
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" loading="lazy">
-              <h3>Python</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <!-- Web Strategy -->
+          <div class="card text-center p-8 group hover:shadow-lg transition-all duration-300 h-full">
+            <div class="mx-auto rounded-full bg-primary/10 p-4 w-fit transition-all duration-300 group-hover:bg-primary/20">
+              <i data-lucide="lightbulb" class="h-6 w-6 text-primary"></i>
             </div>
+            <h3 class="mt-6 text-xl font-bold group-hover:text-primary transition-colors">Web Strategy</h3>
+            <p class="mt-4 text-muted-foreground">Data-driven approach to create a clear roadmap for your online presence and business goals.</p>
           </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="SQL" loading="lazy">
-              <h3>SQL</h3>
+
+          <!-- Web Design -->
+          <div class="card text-center p-8 group hover:shadow-lg transition-all duration-300 h-full">
+            <div class="mx-auto rounded-full bg-primary/10 p-4 w-fit transition-all duration-300 group-hover:bg-primary/20">
+              <i data-lucide="layout" class="h-6 w-6 text-primary"></i>
             </div>
+            <h3 class="mt-6 text-xl font-bold group-hover:text-primary transition-colors">Web Design</h3>
+            <p class="mt-4 text-muted-foreground">Stunning, responsive designs that work beautifully across all devices and create memorable brand experiences.</p>
           </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" loading="lazy">
-              <h3>React</h3>
+
+          <!-- Development -->
+          <div class="card text-center p-8 group hover:shadow-lg transition-all duration-300 h-full">
+            <div class="mx-auto rounded-full bg-primary/10 p-4 w-fit transition-all duration-300 group-hover:bg-primary/20">
+              <i data-lucide="code-2" class="h-6 w-6 text-primary"></i>
             </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS" loading="lazy">
-              <h3>Tailwind CSS</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" loading="lazy">
-              <h3>TypeScript</h3>
-            </div>
-          </div>
-          
-          <!-- Row 2 -->
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" loading="lazy">
-              <h3>JavaScript</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" loading="lazy">
-              <h3>HTML5</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" loading="lazy">
-              <h3>GitHub</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" loading="lazy">
-              <h3>Node.js</h3>
-            </div>
-          </div>
-          <div class="bento-card group">
-            <div class="bento-content">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" loading="lazy">
-              <h3>CSS3</h3>
-            </div>
+            <h3 class="mt-6 text-xl font-bold group-hover:text-primary transition-colors">Development</h3>
+            <p class="mt-4 text-muted-foreground">Custom-built websites using the latest technologies for speed, security, and seamless user experiences.</p>
           </div>
         </div>
-        
-        
       </div>
     </section>
 
+
     <!-- Contact -->
-    <section id="contact" class="w-full bg-background py-24 md:py-32">
+    <section id="contact" class="w-full bg-gradient-to-br from-background via-secondary/20 to-background py-24 md:py-32 transition-theme">
       <div class="container mx-auto px-4">
-        <div class="mx-auto max-w-3xl text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            <span class="gradient-text">Contact Us</span>
+        <div class="mx-auto max-w-4xl text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold tracking-tight">
+            Let's Build Something<br><span class="gradient-text">Amazing Together</span>
           </h2>
-          <p class="text-lg text-muted-foreground">
-            Have a project in mind? Let's talk about how we can help you transform your ideas into reality.
-          </p>
         </div>
-        <div class="mt-16 flex justify-center">
-          <div class="space-y-8 text-center max-w-2xl">
-            <h3 class="text-2xl font-bold">Get in Touch</h3>
-            <p class="text-muted-foreground text-lg">
-              Ready to start your next AI project? Reach out to us and let's discuss how we can help you achieve your goals.
-            </p>
-            
-            <div class="space-y-6 mt-10">
-              <div class="flex flex-col items-center gap-4 group">
-                <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <i data-lucide="mail" class="h-8 w-8 text-primary"></i>
+        
+        <div class="max-w-4xl mx-auto bg-card/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-border/20">
+          <div class="grid md:grid-cols-2 gap-12">
+            <!-- Contact Info -->
+            <div class="space-y-8">
+              <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 mt-1">
+                  <div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <i data-lucide="mail" class="h-5 w-5 text-primary"></i>
+                  </div>
                 </div>
                 <div>
-                  <h4 class="text-xl font-semibold mb-2">Email</h4>
-                  <a href="mailto:hi@snowbasestudio.com" class="text-xl text-muted-foreground hover:text-primary transition-colors">hi@snowbasestudio.com</a>
+                  <h3 class="font-semibold mb-1">Email Us</h3>
+                  <a href="mailto:hi@snowbasestudio.com?subject=Website%20Inquiry&body=Hello%20SnowBase%20Studio,%0D%0A%0D%0AI'm%20interested%20in%20discussing%20a%20project.%0D%0A%0D%0AProject%20Details:%0D%0A-%20%0D%0A%0D%0ABudget:%0D%0A-%20%0D%0A%0D%0ATimeline:%0D%0A-%20%0D%0A%0D%0ALooking%20forward%20to%20hearing%20from%20you!" 
+                     class="text-muted-foreground hover:text-primary transition-colors">
+                    hi@snowbasestudio.com
+                  </a>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 mt-1">
+                  <div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <i data-lucide="map-pin" class="h-5 w-5 text-primary"></i>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-semibold mb-1">Location</h3>
+                  <p class="text-muted-foreground">Serving clients worldwide</p>
                 </div>
               </div>
             </div>
             
-            
+            <!-- Contact Form -->
+            <form onsubmit="event.preventDefault(); const name = document.getElementById('name').value; const email = document.getElementById('email').value; const message = document.getElementById('message').value; window.location.href = `mailto:hi@snowbasestudio.com?subject=New%20Website%20Inquiry&body=Name:%20${encodeURIComponent(name)}%0D%0AEmail:%20${encodeURIComponent(email)}%0D%0A%0D%0AMessage:%0D%0A${encodeURIComponent(message)}`;" class="space-y-6">
+              <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label for="name" class="block text-sm font-medium mb-1.5">Name</label>
+                  <input type="text" id="name" required class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all" placeholder="Your name">
+                </div>
+                <div>
+                  <label for="email" class="block text-sm font-medium mb-1.5">Email</label>
+                  <input type="email" id="email" required class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all" placeholder="your.email@example.com">
+                </div>
+                <div>
+                  <label for="message" class="block text-sm font-medium mb-1.5">Message</label>
+                  <textarea id="message" rows="4" required class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all" placeholder="Tell us about your project..."></textarea>
+                </div>
+              </div>
+              <button type="submit" class="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg font-medium hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2">
+                Send Message
+              </button>
+            </form>
+            </div>
           </div>
         </div>
       </div>
     </section>
   </main>
   
-  
-  
   <script>
-    // Snowflake animation - optimized for performance
-    document.addEventListener('DOMContentLoaded', () => {
-      const canvas = document.getElementById('snow');
-      if (!canvas) return;
+    // Technology Carousel - Auto-scrolling with circular reveal
+    document.addEventListener('DOMContentLoaded', function() {
+      const carousel = document.getElementById('techCarousel');
+      const items = document.querySelectorAll('.tech-item');
+      const itemWidth = 128; // Width of each item (w-24 + space-x-8 = 128px)
+      let scrollPosition = 0;
       
-      const ctx = canvas.getContext('2d');
-      let animationId;
-      
-      // Resize handler with debounce
-      let resizeTimeout;
-      const handleResize = () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-        }, 100);
-      };
-      
-      // Initial setup
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      window.addEventListener('resize', handleResize);
-      
-      // Snowflake class
-      class Snowflake {
-        constructor() {
-          this.reset();
-          this.y = Math.random() * canvas.height; // Start at random y position
-        }
-        
-        reset() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * -100; // Start above the viewport
-          this.r = 1 + Math.random() * 3; // Slightly larger size range
-          this.speed = 0.5 + Math.random() * 2; // Variable speed
-          this.wind = (Math.random() - 0.5) * 1; // More horizontal movement
-          this.opacity = 0.4 + Math.random() * 0.6; // More visible snowflakes
-          this.rotation = Math.random() * Math.PI * 2; // Initial rotation
-          this.rotationSpeed = (Math.random() - 0.5) * 0.1; // Rotation speed
-        }
-        
-        update() {
-          this.x += this.wind;
-          this.y += this.speed;
-          this.rotation += this.rotationSpeed;
-          
-          // Reset if out of bounds
-          if (this.y > canvas.height + 10 || 
-              this.x < -10 || 
-              this.x > canvas.width + 10) {
-            this.reset();
-            this.y = -10;
-          }
-        }
-        
-        draw() {
-          ctx.save();
-          ctx.translate(this.x, this.y);
-          ctx.rotate(this.rotation);
-          ctx.beginPath();
-          ctx.moveTo(0, -this.r);
-          for (let i = 0; i < 6; i++) {
-            ctx.lineTo(
-              Math.cos((i * 60 + 30) * Math.PI / 180) * this.r,
-              Math.sin((i * 60 + 30) * Math.PI / 180) * this.r
-            );
-            ctx.lineTo(
-              Math.cos((i * 60 + 60) * Math.PI / 180) * (this.r * 0.5),
-              Math.sin((i * 60 + 60) * Math.PI / 180) * (this.r * 0.5)
-            );
-          }
-          ctx.closePath();
-          ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-      
-      // Create snowflakes
-      const flakes = Array.from({ length: 100 }, () => new Snowflake());
-      
-      // Animation loop
-      const animate = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        flakes.forEach(flake => {
-          flake.update();
-          flake.draw();
-        });
-        animationId = requestAnimationFrame(animate);
-      };
-      
-      // Start animation with a small delay
-      const startAnimation = () => {
-        setTimeout(() => {
-          animationId = requestAnimationFrame(animate);
-        }, 500);
-      };
-      
-      // Handle page visibility changes
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          startAnimation();
-        } else {
-          cancelAnimationFrame(animationId);
-        }
+      // Clone items for infinite scrolling
+      items.forEach(item => {
+        const clone = item.cloneNode(true);
+        carousel.appendChild(clone);
       });
       
-      // Start the animation
-      startAnimation();
+      // Add circular reveal effect with better compatibility
+      const container = carousel.parentElement;
+      container.style.overflow = 'hidden';
+      container.style.position = 'relative';
+      container.style.borderRadius = '9999px';
       
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        document.removeEventListener('visibilitychange', startAnimation);
-        cancelAnimationFrame(animationId);
-      };
+      // Fallback for browsers that don't support mask
+      if (CSS.supports('mask', 'none') || CSS.supports('-webkit-mask', 'none')) {
+        container.style.mask = 'radial-gradient(circle at center, black 90%, transparent 100%)';
+        container.style.webkitMask = 'radial-gradient(circle at center, black 90%, transparent 100%)';
+      } else {
+        // Fallback: just show a regular carousel without masking
+        container.style.overflowX = 'auto';
+        container.style.scrollSnapType = 'x mandatory';
+        carousel.style.scrollSnapType = 'x mandatory';
+      }
+      
+      // Auto-scroll with consistent speed
+      const scrollSpeed = 0.5; // Consistent speed (lower = slower)
+      const totalWidth = items.length * itemWidth;
+      let lastTimestamp = 0;
+      
+      function animate(timestamp) {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        const delta = timestamp - lastTimestamp;
+        lastTimestamp = timestamp;
+        
+        scrollPosition = (scrollPosition + scrollSpeed * (delta / 16)) % totalWidth;
+        carousel.style.transform = `translateX(-${scrollPosition}px)`;
+        
+        // Add 3D effect to items based on their position
+        const visibleItems = document.querySelectorAll('.tech-item');
+        visibleItems.forEach((item) => {
+          const rect = item.getBoundingClientRect();
+          const center = window.innerWidth / 2;
+          const distance = Math.abs(rect.left + rect.width/2 - center);
+          const scale = 1 - Math.min(distance / 1000, 0.5);
+          const opacity = 1 - Math.min(distance / 500, 0.7);
+          item.style.transform = `scale(${scale})`;
+          item.style.opacity = opacity;
+          item.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        });
+        
+        requestAnimationFrame(animate);
+      }
+      
+      // Start the animation with consistent timing
+      requestAnimationFrame(animate);
     });
-    
+  </script>
+  
+  <script>
     // Mobile menu toggle
     document.addEventListener('DOMContentLoaded', () => {
       const menuBtn = document.getElementById('menu-btn');
@@ -686,16 +761,6 @@
   </script>
   
   <style>
-    canvas#snow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 10;
-      opacity: 0.9;
-    }
     
     /* Reduce motion preference */
     @media (prefers-reduced-motion: reduce) {
@@ -718,5 +783,182 @@
       animation-delay: 2s;
     }
   </style>
+  
+  <!-- Theme Toggle Script -->
+  <!-- Particles.js library -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  
+  <script>
+    // Theme toggle and particles initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize particles
+      function initParticles() {
+        if (typeof particlesJS !== 'undefined') {
+          const isDark = document.documentElement.classList.contains('dark');
+          const particleColor = isDark ? '#ffffff' : '#00D7E6';
+          
+          particlesJS('particles-js', {
+            particles: {
+              number: { 
+                value: 80,
+                density: { 
+                  enable: true, 
+                  value_area: 1000 
+                }
+              },
+              color: { 
+                value: particleColor 
+              },
+              shape: { 
+                type: 'circle' 
+              },
+              opacity: {
+                value: 0.8,
+                random: true,
+                anim: { 
+                  enable: true, 
+                  speed: 0.5, 
+                  opacity_min: 0.1, 
+                  sync: false 
+                }
+              },
+              size: {
+                value: 2.5,
+                random: true,
+                anim: { 
+                  enable: true, 
+                  speed: 1, 
+                  size_min: 0.5, 
+                  sync: false 
+                }
+              },
+              line_linked: {
+                enable: false  // Remove connecting lines
+              },
+              move: {
+                enable: true,
+                speed: 0.5,  // Slower movement
+                direction: 'bottom',  // Move down like snow
+                random: true,
+                straight: false,
+                out_mode: 'out',
+                bounce: false
+              }
+            },
+            interactivity: {
+              detect_on: 'window',
+              events: {
+                onhover: { 
+                  enable: true, 
+                  mode: 'repulse'  // Gently push particles away on hover
+                },
+                onclick: { 
+                  enable: false  // Disable click interaction
+                },
+                resize: true
+              },
+              modes: {
+                repulse: { 
+                  distance: 50,  // Shorter repulsion distance
+                  duration: 0.4  // Slower repulsion
+                }
+              }
+            },
+            retina_detect: true
+          });
+        }
+      }
+      
+      // Initialize particles on load
+      initParticles();
+      
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      // Reinitialize particles when theme changes
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          // Wait for theme to change
+          setTimeout(() => {
+            // Remove existing particles
+            if (window.pJSDom && window.pJSDom.length > 0) {
+              window.pJSDom[0].pJS.fn.vendors.destroypJS();
+              window.pJSDom = [];
+            }
+            // Reinitialize with new theme
+            initParticles();
+          }, 100);
+        });
+      }
+      
+      // Function to set theme
+      function setTheme(isDark) {
+        // Force a reflow to ensure transitions work
+        document.body.offsetHeight;
+        
+        // Toggle icons based on theme
+        const moonIcon = document.querySelector('[data-lucide="moon"]');
+        const sunIcon = document.querySelector('[data-lucide="sun"]');
+        
+        if (isDark) {
+          moonIcon.classList.add('hidden');
+          sunIcon.classList.remove('hidden');
+        } else {
+          moonIcon.classList.remove('hidden');
+          sunIcon.classList.add('hidden');
+        }
+        
+        // Set a small timeout to ensure the transition is applied before changing the theme
+        setTimeout(() => {
+          if (isDark) {
+            html.classList.add('dark');
+            html.style.setProperty('--background', '223 30% 9%');
+            html.style.setProperty('--foreground', '216 40% 95%');
+            html.style.setProperty('--card', '223 30% 14%');
+            html.style.setProperty('--card-foreground', '216 40% 95%');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            html.classList.remove('dark');
+            html.style.setProperty('--background', '0 0% 100%');
+            html.style.setProperty('--foreground', '223 30% 9%');
+            html.style.setProperty('--card', '210 40% 98%');
+            html.style.setProperty('--card-foreground', '223 30% 9%');
+            localStorage.setItem('theme', 'light');
+          }
+          
+          // No need to remove transitions as they're now in the CSS
+        }, 10);
+        // Toggle icons
+        const icons = document.querySelectorAll('#theme-toggle i');
+        if (icons.length > 0) {
+          icons.forEach(icon => icon.classList.toggle('hidden'));
+        }
+      }
+      
+      // Initialize theme and event listener
+      if (themeToggle) {
+        // Load saved theme or use system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          setTheme(savedTheme === 'dark');
+        } else {
+          setTheme(prefersDarkScheme.matches);
+        }
+        
+        // Set up click handler
+        themeToggle.addEventListener('click', () => {
+          const isDark = !html.classList.contains('dark');
+          setTheme(isDark);
+        });
+        
+        // Initialize Lucide icons
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      }
+    });
+  </script>
 </body>
 </html>
