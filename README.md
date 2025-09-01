@@ -1,4 +1,4 @@
-# 🚀 SnowBase Studio - AI Development Company
+# 🚀 SnowBase Studio - Website Development Company
 
 ✨ **Transforming Ideas into Intelligent Solutions**
 
