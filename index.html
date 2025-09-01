@@ -501,6 +501,139 @@
     
   </style>
   <style>
+    /* FAQ Styles */
+    .faq-section {
+      scroll-margin-top: 6rem;
+    }
+    
+    .faq-category {
+      background: hsl(var(--card));
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+    
+    .faq-category:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .faq-category-header {
+      padding: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: hsl(222 47% 11%/0.3); /* Navy background in dark mode */
+      transition: all 0.3s ease;
+    }
+    
+    .dark .faq-category-header {
+      background: hsl(222 47% 11%/0.5); /* Slightly more opaque navy in dark mode */
+    }
+    
+    .dark .faq-category-header:hover {
+      background: hsl(222 47% 11%/0.7);
+    }
+    
+    @media (prefers-color-scheme: light) {
+      .faq-category-header {
+        background: hsl(210 40% 96.1%/0.5); /* Light blue background in light mode */
+      }
+      .faq-category-header:hover {
+        background: hsl(210 40% 96.1%/0.8);
+      }
+    }
+    
+    .faq-category-header:hover {
+      background: hsl(var(--muted));
+    }
+    
+    .faq-category-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: hsl(var(--foreground));
+    }
+    
+    .faq-category-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    
+    .faq-category.active .faq-category-content {
+      max-height: 2000px; /* Adjust based on content */
+      transition: max-height 0.5s ease-in;
+    }
+    
+    .faq-item {
+      border-bottom: 1px solid hsl(var(--border));
+      transition: all 0.2s ease;
+    }
+    
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+    
+    .faq-question {
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+    
+    .faq-question:hover {
+      background: hsl(var(--secondary)/0.2);
+    }
+    
+    .faq-question h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: hsl(var(--foreground));
+      text-align: left;
+      flex: 1;
+    }
+    
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .faq-item.active .faq-answer {
+      max-height: 1000px; /* Adjust based on content */
+      padding: 0 1.5rem 1.5rem;
+      transition: max-height 0.5s ease-in, padding 0.3s ease;
+    }
+    
+    .faq-icon {
+      transition: transform 0.3s ease;
+      margin-left: 1rem;
+      flex-shrink: 0;
+    }
+    
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+    
+    .faq-category.active .faq-category-icon {
+      transform: rotate(180deg);
+    }
+    
+    .faq-category-icon {
+      transition: transform 0.3s ease;
+      margin-left: 1rem;
+    }
+    
     /* Particle styles */
     #particles-js {
       position: fixed;
@@ -605,6 +738,335 @@
     </section>
 
 
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section w-full bg-gradient-to-br from-background via-secondary/10 to-background py-24 transition-theme">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
+          </div>
+          
+          <div class="space-y-6">
+            <!-- General Services -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>General Services</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>What services does SnowBaseStudio offer?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We specialize in custom website design, AI-powered web solutions, UX/UI design, web development, and ongoing site maintenance.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you work with businesses of all sizes?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes! We support startups, small businesses, and large enterprises alike.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can you redesign my existing website?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Absolutely. We offer website revamps to modernize your look and improve performance.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you build e-commerce websites?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can create secure, scalable online stores tailored to your business needs.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>What technologies do you use?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Our stack includes Python, SQL, React, Tailwind CSS, TypeScript, JavaScript, HTML5, Node.js, and CSS3.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project Process -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Project Process</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How does the design process work?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We start with a discovery session, move to wireframes and prototypes, and then build your site with your feedback at every step.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How long does it take to build a website?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Typical projects take 2–6 weeks, depending on complexity and requirements.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can I track project progress?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we provide regular updates and milestones so you're always informed.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do I own my website after it's completed?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, you receive full ownership of your website and its assets.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pricing & Payment -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Pricing & Payment</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How much does a website cost?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Pricing depends on your needs and project scope. Contact us for a custom quote.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you offer payment plans?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can split payments across project milestones.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Are there any ongoing costs?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Ongoing costs may include hosting, maintenance, or optional feature upgrades.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical & Support -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Technical & Support</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Will my website be mobile-friendly?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Absolutely. All our sites are fully responsive and optimized for mobile devices.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Do you offer post-launch support?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we provide maintenance packages and ongoing support to keep your site running smoothly.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can you help with website hosting and domain registration?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can assist with hosting, domain setup, and website deployment.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Will my site be SEO optimized?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we follow best SEO practices to help your site rank well on search engines.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can you integrate third-party tools or APIs?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we can connect your website to CRMs, payment gateways, analytics, and more.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security & Privacy -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Security & Privacy</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Is my website secure?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We use best practices for security, including SSL, secure coding, and regular updates.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How do you handle my data and privacy?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>We follow strict privacy policies and never share your information without consent.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Getting Started -->
+            <div class="faq-category">
+              <div class="faq-category-header">
+                <h3>Getting Started</h3>
+                <svg class="faq-category-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="faq-category-content">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>How do I start a project with SnowBaseStudio?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Simply reach out via our contact form or email. We'll schedule a free consultation to discuss your goals.</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>What do I need to provide before starting?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Any branding materials, content, or ideas you have. We'll guide you through the rest!</p>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    <h4>Can I request a demo or portfolio?</h4>
+                    <svg class="faq-icon w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div class="faq-answer">
+                    <p>Yes, we're happy to share sample projects and walk you through our process.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- Contact -->
     <section id="contact" class="w-full bg-gradient-to-br from-background via-secondary/20 to-background py-24 md:py-32 transition-theme">
       <div class="container mx-auto px-4">
@@ -663,7 +1125,7 @@
                 </div>
               </div>
               <button type="submit" class="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg font-medium hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2">
-                Send Message
+                Preview Email
               </button>
             </form>
             </div>
@@ -789,8 +1251,38 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   
   <script>
-    // Theme toggle and particles initialization
+    // Theme toggle, particles initialization, and FAQ functionality
     document.addEventListener('DOMContentLoaded', function() {
+      // FAQ Functionality
+      const faqCategories = document.querySelectorAll('.faq-category');
+      const faqItems = document.querySelectorAll('.faq-item');
+      
+      // Toggle FAQ category
+      faqCategories.forEach(category => {
+        const header = category.querySelector('.faq-category-header');
+        header.addEventListener('click', () => {
+          category.classList.toggle('active');
+        });
+      });
+      
+      // Toggle FAQ item
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+          // Close other items in the same category
+          const parentCategory = item.closest('.faq-category');
+          const allItemsInCategory = parentCategory.querySelectorAll('.faq-item');
+          allItemsInCategory.forEach(i => {
+            if (i !== item) i.classList.remove('active');
+          });
+          
+          // Toggle current item
+          item.classList.toggle('active');
+        });
+      });
+      
+      // Don't open any category by default
+      // Previously opened first category by default, now removed
       // Initialize particles
       function initParticles() {
         if (typeof particlesJS !== 'undefined') {
