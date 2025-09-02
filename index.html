@@ -9,51 +9,51 @@
   <link rel="apple-touch-icon" href="favicon.ico" />
   <meta name="description" content="SnowBase Studio is a premium AI development company creating high-converting solutions." />
   <meta name="keywords" content="AI development, machine learning, data analytics, AI consulting, SnowBase Studio">
-  
+ 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://snowbasestudio.com/">
   <meta property="og:title" content="SnowBase Studio | AI Development">
   <meta property="og:description" content="SnowBase Studio is a premium AI development company creating high-converting solutions.">
   <meta property="og:image" content="https://snowbasestudio.com/preview.jpg">
-  
+ 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://snowbasestudio.com/">
   <meta property="twitter:title" content="SnowBase Studio | AI Development">
   <meta property="twitter:description" content="SnowBase Studio is a premium AI development company creating high-converting solutions.">
   <meta property="twitter:image" content="https://snowbasestudio.com/preview.jpg">
-  
+ 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
+ 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Initialize Lucide Icons
       lucide.createIcons();
-      
+     
       // Initialize snow animation
       const canvas = document.getElementById('snow');
       if (canvas) {
         const ctx = canvas.getContext('2d');
         let animationId;
         let flakes = [];
-        
+       
         // Set canvas size
         function resizeCanvas() {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
         }
-        
+       
         // Snowflake class
         class Snowflake {
           constructor() {
             this.reset();
             this.y = Math.random() * canvas.height;
           }
-          
+         
           reset() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * -100;
@@ -62,18 +62,18 @@
             this.angle = Math.random() * Math.PI * 2;
             this.opacity = Math.random() * 0.5 + 0.5;
           }
-          
+         
           update() {
             this.y += this.speed;
             this.x += Math.sin(this.angle) * 0.5;
             this.angle += 0.01;
-            
+           
             if (this.y > canvas.height) {
               this.reset();
               this.y = -10;
             }
           }
-          
+         
           draw() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -88,18 +88,18 @@
             ctx.fill();
           }
         }
-        
+       
         // Create snowflakes with responsive sizing
         function createSnowflakes() {
           // Cancel any ongoing animations to prevent memory leaks
           if (animationId) {
             cancelAnimationFrame(animationId);
           }
-          
+         
           flakes = [];
           const isDark = document.documentElement.classList.contains('dark');
           const isMobile = window.innerWidth < 768; // Mobile breakpoint
-          
+         
           // Adjust snowflake count based on screen size and theme
           let count;
           if (isMobile) {
@@ -107,7 +107,7 @@
           } else {
             count = Math.floor(window.innerWidth / (isDark ? 15 : 40));
           }
-          
+         
           for (let i = 0; i < count; i++) {
             const flake = new Snowflake();
             if (isMobile) {
@@ -120,64 +120,64 @@
             }
             flakes.push(flake);
           }
-          
+         
           // Restart animation
           if (canvas) {
             animate();
           }
         }
-        
+       
         // Animation loop
         function animate() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
+         
           flakes.forEach(flake => {
             flake.update();
             flake.draw();
           });
-          
+         
           animationId = requestAnimationFrame(animate);
         }
-        
+       
         // Handle window resize with debounce
         let resizeTimeout;
         let resizeTimer;
-        
+       
         function handleResize() {
           // Clear the timeout if it exists
           if (resizeTimeout) {
             cancelAnimationFrame(resizeTimeout);
           }
-          
+         
           // Debounce the resize handler
           resizeTimeout = requestAnimationFrame(() => {
             // Store current scroll position
             const scrollY = window.scrollY;
-            
+           
             // Update canvas size and recreate snowflakes
             resizeCanvas();
             createSnowflakes();
-            
+           
             // Restore scroll position to prevent jumping
             window.scrollTo(0, scrollY);
           });
         }
-        
+       
         // Initialize
         resizeCanvas();
         createSnowflakes();
-        
+       
         // Add optimized resize event listener
         window.addEventListener('resize', () => {
           clearTimeout(resizeTimer);
           resizeTimer = setTimeout(handleResize, 100);
         });
-        
+       
         // Initial animation start
         if (canvas) {
           animate();
         }
-        
+       
         // Clean up on unmount
         return () => {
           window.removeEventListener('resize', handleResize);
@@ -192,38 +192,38 @@
       }
     });
   </script>
-  
+ 
   <style>
     /* Theme transition settings */
     :root {
       --transition-duration: 100ms;
       --transition-timing: ease;
     }
-    
+   
     /* Theme transition styles */
     /* Theme transition for background elements */
     .theme-transition,
     .theme-transition::before,
     .theme-transition::after {
-      transition: 
+      transition:
         background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
         border-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-    
+   
     /* Text color transitions - simplified to prevent blinking */
     .theme-transition {
       transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
                  border-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
                  box-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-    
+   
     /* Force immediate text color changes without transition */
     .theme-transition * {
       transition: none !important;
       color: inherit !important;
     }
-    
+   
     /* Disable transitions during initial page load */
     .no-transition,
     .no-transition *,
@@ -231,31 +231,31 @@
     .no-transition::after {
       transition: none !important;
     }
-    
+   
     /* Ensure text colors are always visible and stable */
     body {
       color-scheme: light dark;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
-    
+   
     .text-foreground {
       color: hsl(var(--foreground)) !important;
       transition: none !important;
     }
-    
+   
     /* Smooth background transitions only */
     html {
       transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1);
       color: inherit !important;
     }
-    
+   
     /* Force text to stay solid during transitions */
     * {
       transition: none !important;
       color: inherit !important;
     }
-    
+   
     /* Background elements that should transition */
     body,
     .bg-background,
@@ -277,7 +277,7 @@
       transition-duration: var(--transition-duration);
       transition-timing-function: var(--transition-timing);
     }
-    
+   
     :root {
       /* Base colors */
       --primary: 192 100% 37%; /* #0099BC */
@@ -285,7 +285,7 @@
       --destructive: 0 84.2% 60.2%;
       --ring: 174 51% 50%;
       --radius: 0.5rem;
-      
+     
       /* Light theme (default) */
       --background: 0 0% 100%;
       --foreground: 223 30% 9%;
@@ -303,10 +303,10 @@
       --border: 223 30% 90%;
       --input: 223 30% 90%;
       --ring: 174 51% 50%;
-      
+     
       color-scheme: light;
     }
-    
+   
     .dark {
       --background: 223 30% 9%;
       --foreground: 216 40% 95%;
@@ -343,40 +343,40 @@
     .text-accent { color: hsl(var(--accent)); }
 
     html { scroll-behavior: smooth; }
-    body { 
+    body {
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
     /* Enhanced button styles */
-    .btn { 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      border-radius: 0.5rem; 
-      padding: 0.75rem 1.5rem; 
-      font-size: 1rem; 
-      font-weight: 600; 
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
     }
-    .btn-primary { 
-      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent))); 
-      color: hsl(var(--primary-foreground)); 
+    .btn-primary {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+      color: hsl(var(--primary-foreground));
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    .btn-primary:hover { 
+    .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-    .btn-outline { 
-      border: 2px solid hsl(var(--border)); 
-      color: hsl(var(--foreground)); 
-      background-color: transparent; 
+    .btn-outline {
+      border: 2px solid hsl(var(--border));
+      color: hsl(var(--foreground));
+      background-color: transparent;
     }
-    .btn-outline:hover { 
+    .btn-outline:hover {
       background-color: hsl(var(--primary) / 0.1);
       border-color: hsl(var(--primary));
     }
@@ -411,7 +411,7 @@
       position: relative;
       overflow: hidden;
     }
-    
+   
     .bento-card::before {
       content: '';
       position: absolute;
@@ -421,17 +421,17 @@
       transition: opacity 0.4s ease;
       border-radius: 1.25rem;
     }
-    
+   
     .bento-card:hover {
       transform: translateY(-8px) scale(1.03);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       border-color: rgba(255, 255, 255, 0.25);
     }
-    
+   
     .bento-card:hover::before {
       opacity: 1;
     }
-    
+   
     .bento-content {
       display: flex;
       flex-direction: column;
@@ -442,12 +442,12 @@
       position: relative;
       z-index: 1;
     }
-    
+   
     .bento-card {
       perspective: 1000px;
       transform-style: preserve-3d;
     }
-    
+   
     .bento-card img {
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       height: 5rem;
@@ -458,21 +458,21 @@
       transform: translateZ(0);
       will-change: transform, filter;
     }
-    
+   
     .bento-card:hover img {
       transform: translateZ(30px) scale(1.2) rotateY(8deg) rotateX(8deg);
       opacity: 1;
       filter: drop-shadow(0 12px 24px rgba(0,0,0,0.25)) brightness(1.15) saturate(1.2);
     }
-    
+   
     .bento-card .bento-content {
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    
+   
     .bento-card:hover .bento-content {
       transform: translateY(-8px);
     }
-    
+   
     .bento-card h3 {
       color: hsl(var(--foreground));
       font-weight: 700;
@@ -481,32 +481,32 @@
       transition: all 0.3s ease;
       text-align: center;
     }
-    
+   
     .bento-card:hover h3 {
       color: hsl(var(--primary));
     }
-    
+   
     /* Snowflake rotation animation */
     @keyframes rotate {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    
+   
     .group:hover img[alt="SnowBase Studio logo"] {
       animation: rotate 7s linear infinite;
       transition: transform 0.3s ease-out;
     }
 
     /* Badge */
-    .badge { 
-      display: inline-flex; 
-      align-items: center; 
-      border-radius: 9999px; 
-      padding: 0.5rem 1rem; 
-      font-size: 0.875rem; 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
       font-weight: 600;
-      background-color: hsl(var(--secondary)); 
-      color: hsl(var(--foreground)); 
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--foreground));
       transition: all 0.3s ease;
     }
     .badge:hover {
@@ -527,37 +527,37 @@
       50% { transform: translateY(-15px); }
       100% { transform: translateY(0px); }
     }
-    
+   
     @keyframes pulse-slow {
       0%, 100% { opacity: 0.6; }
       50% { opacity: 0.3; }
     }
-    
+   
     @keyframes gradient-x {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-    
+   
     .animate-float {
       animation: float 6s ease-in-out infinite;
     }
-    
+   
     .animate-pulse-slow {
       animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    
+   
     .animate-gradient-x {
       background-size: 200% 200%;
       animation: gradient-x 3s ease infinite;
     }
-    
+   
     /* Falling snowflakes */
-    .snowflakes { 
-      position: fixed; 
-      inset: 0; 
-      pointer-events: none; 
-      overflow: hidden; 
+    .snowflakes {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
       z-index: 0;
     }
     /* Hide snow in tech stack section */
@@ -571,7 +571,7 @@
     }
     /* Create variety */
     .snowflake { animation: snowfall var(--dur, 15s) linear infinite; font-size: var(--size, 14px); left: var(--left, 50%); animation-delay: var(--delay, 0s); }
-    
+   
     /* Gradient text */
     .gradient-text {
       background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
@@ -580,19 +580,19 @@
       background-clip: text;
       color: transparent;
     }
-    
+   
     /* Text selection styles */
     html {
       -webkit-tap-highlight-color: #00D7E6;
     }
-    
+   
     /* Base selection styles */
     ::selection {
       background: #00D7E6;
       color: #000;
       text-shadow: none;
     }
-    
+   
     /* Apply to all elements */
     *,
     *::selection,
@@ -600,39 +600,39 @@
     *::-webkit-selection {
       -webkit-tap-highlight-color: #00D7E6;
     }
-    
+   
     /* Force selection color */
     *::selection {
       background: #00D7E6 !important;
       color: #000 !important;
       -webkit-text-fill-color: #000 !important;
     }
-    
+   
     *::-moz-selection {
       background: #00D7E6 !important;
       color: #000 !important;
     }
-    
+   
     *::-webkit-selection {
       background: #00D7E6 !important;
       color: #000 !important;
       -webkit-text-fill-color: #000 !important;
     }
-    
+   
     /* Decorative elements */
     .decorative-circle {
       position: absolute;
       border-radius: 50%;
       background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%);
     }
-    
+   
   </style>
   <style>
     /* FAQ Styles */
     .faq-section {
       scroll-margin-top: 6rem;
     }
-    
+   
     .faq-category {
       background: hsl(var(--card));
       border-radius: 1rem;
@@ -641,12 +641,12 @@
       transition: all 0.3s ease;
       margin-bottom: 1.5rem;
     }
-    
+   
     .faq-category:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
-    
+   
     .faq-category-header {
       padding: 1.5rem;
       cursor: pointer;
@@ -656,15 +656,15 @@
       background: hsl(222 47% 11%/0.3); /* Navy background in dark mode */
       transition: all 0.3s ease;
     }
-    
+   
     .dark .faq-category-header {
       background: hsl(222 47% 11%/0.5); /* Slightly more opaque navy in dark mode */
     }
-    
+   
     .dark .faq-category-header:hover {
       background: hsl(222 47% 11%/0.7);
     }
-    
+   
     @media (prefers-color-scheme: light) {
       .faq-category-header {
         background: hsl(210 40% 96.1%/0.5); /* Light blue background in light mode */
@@ -673,38 +673,38 @@
         background: hsl(210 40% 96.1%/0.8);
       }
     }
-    
+   
     .faq-category-header:hover {
       background: hsl(var(--muted));
     }
-    
+   
     .faq-category-header h3 {
       margin: 0;
       font-size: 1.25rem;
       font-weight: 600;
       color: hsl(var(--foreground));
     }
-    
+   
     .faq-category-content {
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease-out;
     }
-    
+   
     .faq-category.active .faq-category-content {
       max-height: 2000px; /* Adjust based on content */
       transition: max-height 0.5s ease-in;
     }
-    
+   
     .faq-item {
       border-bottom: 1px solid hsl(var(--border));
       transition: all 0.2s ease;
     }
-    
+   
     .faq-item:last-child {
       border-bottom: none;
     }
-    
+   
     .faq-question {
       padding: 1.25rem 1.5rem;
       cursor: pointer;
@@ -714,11 +714,11 @@
       background: transparent;
       transition: all 0.2s ease;
     }
-    
+   
     .faq-question:hover {
       background: hsl(var(--secondary)/0.2);
     }
-    
+   
     .faq-question h4 {
       margin: 0;
       font-size: 1rem;
@@ -727,7 +727,7 @@
       text-align: left;
       flex: 1;
     }
-    
+   
     .faq-answer {
       padding: 0 1.5rem;
       max-height: 0;
@@ -735,32 +735,32 @@
       transition: max-height 0.3s ease-out, padding 0.3s ease;
       color: hsl(var(--muted-foreground));
     }
-    
+   
     .faq-item.active .faq-answer {
       max-height: 1000px; /* Adjust based on content */
       padding: 0 1.5rem 1.5rem;
       transition: max-height 0.5s ease-in, padding 0.3s ease;
     }
-    
+   
     .faq-icon {
       transition: transform 0.3s ease;
       margin-left: 1rem;
       flex-shrink: 0;
     }
-    
+   
     .faq-item.active .faq-icon {
       transform: rotate(180deg);
     }
-    
+   
     .faq-category.active .faq-category-icon {
       transform: rotate(180deg);
     }
-    
+   
     .faq-category-icon {
       transition: transform 0.3s ease;
       margin-left: 1rem;
     }
-    
+   
     /* Particle styles */
     #particles-js {
       position: fixed;
@@ -771,13 +771,13 @@
       z-index: 0;
       pointer-events: none;
     }
-    
+   
     /* Adjust z-index of main content */
     main {
       position: relative;
       z-index: 1;
     }
-    
+   
     /* Skeleton loading */
     .skeleton {
       position: relative;
@@ -863,7 +863,7 @@
     <i data-lucide="moon" class="w-5 h-5"></i>
     <i data-lucide="sun" class="w-5 h-5 hidden"></i>
   </button>
-  
+ 
   <!-- Header -->
   <header id="site-header" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
     <div class="container mx-auto flex h-16 items-center justify-between px-4">
@@ -883,7 +883,7 @@
   <main class="relative z-10 flex-1">
     <!-- Hero -->
     <section id="home" class="relative overflow-hidden w-full bg-gradient-to-br from-background via-secondary to-background py-28 md:py-36 lg:py-44 transition-theme">
-      
+     
       <div class="relative z-10 container mx-auto px-4 md:px-6">
         <div class="mx-auto max-w-4xl text-center">
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -947,7 +947,7 @@
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
           </div>
-          
+         
           <div class="space-y-6">
             <!-- General Services -->
             <div class="faq-category">
@@ -1137,7 +1137,7 @@
                     <p>Upon request, sites can be fully responsive and optimized for mobile devices.</p>
                   </div>
                 </div>
-                
+               
                 <div class="faq-item">
                   <div class="faq-question">
                     <h4>Can you integrate third-party tools or APIs?</h4>
@@ -1217,7 +1217,7 @@
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
           </div>
-          
+         
           <div class="space-y-6">
             <!-- General Services -->
             <div class="faq-category">
@@ -1407,7 +1407,7 @@
                     <p>Upon request, sites can be fully responsive and optimized for mobile devices.</p>
                   </div>
                 </div>
-                
+               
                 <div class="faq-item">
                   <div class="faq-question">
                     <h4>Can you integrate third-party tools or APIs?</h4>
@@ -1484,7 +1484,7 @@
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
           </div>
-          
+         
           <div class="space-y-6">
             <!-- General Services -->
             <div class="faq-category">
@@ -1674,7 +1674,7 @@
                     <p>Upon request, sites can be fully responsive and optimized for mobile devices.</p>
                   </div>
                 </div>
-                
+               
                 <div class="faq-item">
                   <div class="faq-question">
                     <h4>Can you integrate third-party tools or APIs?</h4>
@@ -1751,7 +1751,7 @@
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
           </div>
-          
+         
           <div class="space-y-6">
             <!-- General Services -->
             <div class="faq-category">
@@ -1941,7 +1941,7 @@
                     <p>Upon request, sites can be fully responsive and optimized for mobile devices.</p>
                   </div>
                 </div>
-                
+               
                 <div class="faq-item">
                   <div class="faq-question">
                     <h4>Can you integrate third-party tools or APIs?</h4>
@@ -2034,7 +2034,7 @@
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p class="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about our services, process, and more.</p>
           </div>
-          
+         
           <div class="space-y-6">
             <!-- General Services -->
             <div class="faq-category">
@@ -2224,7 +2224,7 @@
                     <p>Upon request, sites can be fully responsive and optimized for mobile devices.</p>
                   </div>
                 </div>
-                
+               
                 <div class="faq-item">
                   <div class="faq-question">
                     <h4>Can you integrate third-party tools or APIs?</h4>
@@ -2309,7 +2309,7 @@
             Let's Build Something<br><span class="gradient-text">Amazing Together</span>
           </h2>
         </div>
-        
+       
         <div class="max-w-4xl mx-auto bg-card/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-border/20">
           <div class="grid md:grid-cols-2 gap-12">
             <!-- Contact Info -->
@@ -2322,13 +2322,13 @@
                 </div>
                 <div>
                   <h3 class="font-semibold mb-1">Email Us</h3>
-                  <a href="mailto:hi@snowbasestudio.com?subject=Website%20Inquiry&body=Hello%20SnowBase%20Studio,%0D%0A%0D%0AI'm%20interested%20in%20discussing%20a%20project.%0D%0A%0D%0AProject%20Details:%0D%0A-%20%0D%0A%0D%0ABudget:%0D%0A-%20%0D%0A%0D%0ATimeline:%0D%0A-%20%0D%0A%0D%0ALooking%20forward%20to%20hearing%20from%20you!" 
+                  <a href="mailto:hi@snowbasestudio.com?subject=Website%20Inquiry&body=Hello%20SnowBase%20Studio,%0D%0A%0D%0AI'm%20interested%20in%20discussing%20a%20project.%0D%0A%0D%0AProject%20Details:%0D%0A-%20%0D%0A%0D%0ABudget:%0D%0A-%20%0D%0A%0D%0ATimeline:%0D%0A-%20%0D%0A%0D%0ALooking%20forward%20to%20hearing%20from%20you!"
                      class="text-muted-foreground hover:text-primary transition-colors">
                     hi@snowbasestudio.com
                   </a>
                 </div>
               </div>
-              
+             
               <div class="flex items-start gap-4">
                 <div class="flex-shrink-0 mt-1">
                   <div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -2341,7 +2341,7 @@
                 </div>
               </div>
             </div>
-            
+           
             <!-- Contact Form -->
             <form onsubmit="event.preventDefault(); const name = document.getElementById('name').value; const email = document.getElementById('email').value; const message = document.getElementById('message').value; window.location.href = `mailto:hi@snowbasestudio.com?subject=New%20Website%20Inquiry&body=Name:%20${encodeURIComponent(name)}%0D%0AEmail:%20${encodeURIComponent(email)}%0D%0A%0D%0AMessage:%0D%0A${encodeURIComponent(message)}`;" class="space-y-6">
               <div class="grid grid-cols-1 gap-4">
@@ -2368,18 +2368,18 @@
       </div>
     </section>
   </main>
-  
+ 
   <script>
     // Mobile menu toggle
     document.addEventListener('DOMContentLoaded', () => {
       const menuBtn = document.getElementById('menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
-      
+     
       if (menuBtn && mobileMenu) {
         menuBtn.addEventListener('click', () => {
           mobileMenu.classList.toggle('hidden');
         });
-        
+       
         // Close menu when clicking on menu items
         const menuItems = mobileMenu.querySelectorAll('[data-close-menu]');
         menuItems.forEach(item => {
@@ -2388,17 +2388,17 @@
           });
         });
       }
-      
+     
       // FAQ dropdown functionality
       const faqQuestions = document.querySelectorAll('.faq-question');
       faqQuestions.forEach(question => {
         question.addEventListener('click', () => {
           const answer = question.nextElementSibling;
           const icon = question.querySelector('i[data-lucide="chevron-down"]');
-          
+         
           // Toggle answer visibility
           answer.classList.toggle('hidden');
-          
+         
           // Rotate icon
           if (answer.classList.contains('hidden')) {
             icon.style.transform = 'rotate(0deg)';
@@ -2408,41 +2408,41 @@
         });
       });
     });
-    
+   
     // 3D Technology Carousel
     document.addEventListener('DOMContentLoaded', () => {
       const carousel = document.getElementById('tech-carousel');
       const items = carousel.querySelectorAll('.carousel-item');
       const prevBtn = document.getElementById('prev-btn');
       const nextBtn = document.getElementById('next-btn');
-      
+     
       const itemCount = items.length;
       const angle = 360 / itemCount;
       let currentRotation = 0;
       let autoRotateInterval;
-      
+     
       // Position items in a circle
       function positionItems() {
         items.forEach((item, i) => {
           const rotateY = angle * i + currentRotation;
           const radius = window.innerWidth < 768 ? 120 : 180; // Smaller radius on mobile
-          
+         
           // Calculate position using trigonometry
           const x = Math.sin(rotateY * Math.PI / 180) * radius;
           const z = Math.cos(rotateY * Math.PI / 180) * radius;
-          
+         
           // Apply 3D transformation
           item.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px)`;
-          
+         
           // Adjust opacity and scale based on position
           const absZ = Math.abs(z);
           const maxRadius = radius;
           const opacity = 0.6 + 0.4 * (1 - absZ / maxRadius);
           const scale = 0.8 + 0.2 * (1 - absZ / maxRadius);
-          
+         
           item.style.opacity = opacity;
           item.style.transform += ` scale(${scale})`;
-          
+         
           // Add active class to front item
           if (Math.abs(z - radius) < 10) {
             item.classList.add('active');
@@ -2451,13 +2451,13 @@
           }
         });
       }
-      
+     
       // Rotate carousel
       function rotateCarousel(direction) {
         currentRotation += angle * direction;
         positionItems();
       }
-      
+     
       // Auto-rotate
       function startAutoRotate() {
         clearInterval(autoRotateInterval);
@@ -2465,42 +2465,42 @@
           rotateCarousel(1);
         }, 3000);
       }
-      
+     
       // Stop auto-rotate
       function stopAutoRotate() {
         clearInterval(autoRotateInterval);
       }
-      
+     
       // Initialize
       positionItems();
       startAutoRotate();
-      
+     
       // Event listeners
       prevBtn.addEventListener('click', () => {
         rotateCarousel(-1);
         stopAutoRotate();
         startAutoRotate(); // Restart auto-rotate
       });
-      
+     
       nextBtn.addEventListener('click', () => {
         rotateCarousel(1);
         stopAutoRotate();
         startAutoRotate(); // Restart auto-rotate
       });
-      
+     
       // Handle window resize
       window.addEventListener('resize', positionItems);
     });
-    
+   
     // FAQ Dropdowns
     document.addEventListener('DOMContentLoaded', () => {
       const faqQuestions = document.querySelectorAll('.faq-question');
-      
+     
       faqQuestions.forEach(question => {
         question.addEventListener('click', () => {
           const answer = question.nextElementSibling;
           const icon = question.querySelector('i:last-child');
-          
+         
           // Toggle answer visibility
           if (answer.classList.contains('hidden')) {
             answer.classList.remove('hidden');
@@ -2513,7 +2513,7 @@
       });
     });
   </script>
-  
+ 
   <!-- Loading UI demo logic -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -2550,21 +2550,21 @@
     document.addEventListener('DOMContentLoaded', () => {
       const themeToggle = document.getElementById('theme-toggle');
       const html = document.documentElement;
-      
+     
       // Function to set theme with smooth transition
       function setTheme(isDark) {
         const html = document.documentElement;
         const isCurrentlyDark = html.classList.contains('dark');
-        
+       
         // Don't do anything if theme isn't changing
         if (isDark === isCurrentlyDark) return;
-        
+       
         // Add transition class for smooth fade
         html.classList.add('theme-transition');
-        
+       
         // Force a reflow to ensure the transition class is applied
         document.body.offsetHeight;
-        
+       
         // Apply theme changes
         if (isDark) {
           html.classList.add('dark');
@@ -2573,26 +2573,26 @@
           html.classList.remove('dark');
           document.documentElement.style.colorScheme = 'light';
         }
-        
+       
         // Clean up transition class after transition completes
         const onTransitionEnd = () => {
           html.classList.remove('theme-transition');
           html.removeEventListener('transitionend', onTransitionEnd);
         };
-        
+       
         html.addEventListener('transitionend', onTransitionEnd);
-        
+       
         // Save preference
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        
+       
         // Update icons
-        document.querySelectorAll('[data-lucide="moon"]').forEach(el => 
+        document.querySelectorAll('[data-lucide="moon"]').forEach(el =>
           el.classList.toggle('hidden', isDark)
         );
-        document.querySelectorAll('[data-lucide="sun"]').forEach(el => 
+        document.querySelectorAll('[data-lucide="sun"]').forEach(el =>
           el.classList.toggle('hidden', !isDark)
         );
-        
+       
         // Reinitialize particles after theme change
         setTimeout(() => {
           if (window.pJSDom && window.pJSDom.length > 0) {
@@ -2604,17 +2604,17 @@
           }
         }, 100);
       }
-      
+     
       // Initialize theme
       const savedTheme = localStorage.getItem('theme');
       const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      
+     
       if (savedTheme) {
         setTheme(savedTheme === 'dark');
       } else {
         setTheme(prefersDarkScheme.matches);
       }
-      
+     
       // Theme toggle click handler
       if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -2624,35 +2624,35 @@
       }
     });
   </script>
-  
+ 
   <style>
-    
+   
     /* Reduce motion preference */
     @media (prefers-reduced-motion: reduce) {
       canvas#snow {
         display: none;
       }
-      
+     
       .animate-float,
       .animate-pulse-slow {
         animation: none;
       }
     }
-    
+   
     /* Animation delays */
     .animation-delay-1000 {
       animation-delay: 1s;
     }
-    
+   
     .animation-delay-2000 {
       animation-delay: 2s;
     }
-    
+   
     /* 3D Carousel Styles */
     .perspective-1000 {
       perspective: 1000px;
     }
-    
+   
     .carousel {
       transform-style: preserve-3d;
       position: relative;
@@ -2662,7 +2662,7 @@
       border-radius: 1rem;
       animation: rotate 30s infinite linear;
     }
-    
+   
     .carousel-item {
       position: absolute;
       top: 50%;
@@ -2675,18 +2675,18 @@
       background: hsl(var(--card)); /* Card background */
       border-radius: 1rem;
     }
-    
+   
     .carousel-item:hover {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1.1) !important;
       z-index: 10;
     }
-    
+   
     .carousel-item.active {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1.15);
     }
-    
+   
     @keyframes rotate {
       from {
         transform: rotateY(0deg) rotateX(10deg);
@@ -2695,24 +2695,24 @@
         transform: rotateY(360deg) rotateX(10deg);
       }
     }
-    
+   
     /* Pause animation on hover */
     .carousel-wrapper:hover .carousel {
       animation-play-state: paused;
     }
   </style>
-  
+ 
   <!-- Theme Toggle Script -->
   <!-- Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  
+ 
   <script>
     // Theme toggle, particles initialization, and FAQ functionality
     document.addEventListener('DOMContentLoaded', function() {
       // FAQ Functionality
       const faqCategories = document.querySelectorAll('.faq-category');
       const faqItems = document.querySelectorAll('.faq-item');
-      
+     
       // Toggle FAQ category
       faqCategories.forEach(category => {
         const header = category.querySelector('.faq-category-header');
@@ -2720,7 +2720,7 @@
           category.classList.toggle('active');
         });
       });
-      
+     
       // Toggle FAQ item
       faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
@@ -2731,12 +2731,12 @@
           allItemsInCategory.forEach(i => {
             if (i !== item) i.classList.remove('active');
           });
-          
+         
           // Toggle current item
           item.classList.toggle('active');
         });
       });
-      
+     
       // Don't open any category by default
       // Previously opened first category by default, now removed
       // Initialize particles
@@ -2744,40 +2744,40 @@
         if (typeof particlesJS !== 'undefined') {
           const isDark = document.documentElement.classList.contains('dark');
           const particleColor = isDark ? '#ffffff' : '#00D7E6';
-          
+         
           particlesJS('particles-js', {
             particles: {
-              number: { 
+              number: {
                 value: 80,
-                density: { 
-                  enable: true, 
-                  value_area: 1000 
+                density: {
+                  enable: true,
+                  value_area: 1000
                 }
               },
-              color: { 
-                value: particleColor 
+              color: {
+                value: particleColor
               },
-              shape: { 
-                type: 'circle' 
+              shape: {
+                type: 'circle'
               },
               opacity: {
                 value: 0.8,
                 random: true,
-                anim: { 
-                  enable: true, 
-                  speed: 0.5, 
-                  opacity_min: 0.1, 
-                  sync: false 
+                anim: {
+                  enable: true,
+                  speed: 0.5,
+                  opacity_min: 0.1,
+                  sync: false
                 }
               },
               size: {
                 value: 2.5,
                 random: true,
-                anim: { 
-                  enable: true, 
-                  speed: 1, 
-                  size_min: 0.5, 
-                  sync: false 
+                anim: {
+                  enable: true,
+                  speed: 1,
+                  size_min: 0.5,
+                  sync: false
                 }
               },
               line_linked: {
@@ -2796,17 +2796,17 @@
             interactivity: {
               detect_on: 'window',
               events: {
-                onhover: { 
-                  enable: true, 
+                onhover: {
+                  enable: true,
                   mode: 'repulse'  // Gently push particles away on hover
                 },
-                onclick: { 
+                onclick: {
                   enable: false  // Disable click interaction
                 },
                 resize: true
               },
               modes: {
-                repulse: { 
+                repulse: {
                   distance: 50,  // Shorter repulsion distance
                   duration: 0.4  // Slower repulsion
                 }
@@ -2816,12 +2816,12 @@
           });
         }
       }
-      
+     
       // Initialize particles on load
       initParticles();
-      
+     
       // Theme initialization is now handled in the main script
-      
+     
       // Initialize Lucide icons
       if (window.lucide) {
         lucide.createIcons();
