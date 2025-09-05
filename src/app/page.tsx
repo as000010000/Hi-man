@@ -10,26 +10,20 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    default: "SnowBase Studio | AI Development",
+    default: "SnowBase Studio | Website Development",
     template: "%s | SnowBase Studio"
   },
-  description: "SnowBase Studio is a premium AI development company creating high-converting solutions.",
-  keywords: "AI development, machine learning, data analytics, AI consulting, SnowBase Studio",
+  description: "SnowBase Studio is a premium website development company creating high-converting solutions.",
+  keywords: "Website development, machine learning, data analytics, website consulting, SnowBase Studio",
   authors: [{ name: "SnowBase Studio" }],
   creator: "SnowBase Studio",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://snowbasestudio.com",
-    title: "SnowBase Studio | AI Development",
-    description: "SnowBase Studio is a premium AI development company creating high-converting solutions.",
+    title: "SnowBase Studio | Website Development",
+    description: "SnowBase Studio is a premium website development company creating high-converting solutions.",
     siteName: "SnowBase Studio",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "SnowBase Studio | AI Development",
-    description: "SnowBase Studio is a premium AI development company creating high-converting solutions.",
-    creator: "@snowbasestudio",
   },
   robots: {
     index: true,
@@ -51,7 +45,6 @@ export default function Home() {
             "url": "https://snowbasestudio.com",
             "logo": "https://snowbasestudio.com/logo.png",
             "sameAs": [
-              "https://www.linkedin.com/company/snowbasestudio",
               "https://github.com/snowbasestudio"
             ],
             "contactPoint": {
